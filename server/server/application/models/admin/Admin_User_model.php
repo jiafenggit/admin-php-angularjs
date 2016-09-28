@@ -43,7 +43,7 @@ class Admin_user_model extends MY_Model {
       parent::__construct();    
     }
 
-    function gets($multiple = 0,$limit = 10)
+    function gets($query)
     {
        $limit = isset($query['limit']) ? $query['limit'] : 0;
        $offset = isset($query['offset']) ? $query['offset'] : 0;
@@ -128,7 +128,8 @@ class Admin_user_model extends MY_Model {
       $data = @array(
         'uid' => $req['uid'],
         'name'=> $req['name'],
-        'password' => $req['password']
+        'password' => $req['password'],
+        'role' => $req['role']
       );
       $valid = $this->validation('update',$data,$this->rules);
       $res = array(
