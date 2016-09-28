@@ -1,0 +1,42 @@
+<div class="modal-content">
+  <div class="modal-header">
+    <button type="button" class="close" ng-click="$dismiss()" aria-label="Close"> <em class="fa fa-close"></em>
+    </button>
+    <h4 class="modal-title" id="myModalLabel" >详细信息</h4>
+  </div>
+  <div class="modal-body detail-page" >
+    <form class="container-fluid" class="edit">
+      <div class="form-group input-group">
+        <label class="input-group-addon input-group-addon-primary addon-left">ID</label>
+        <input type="text" class="form-control" value="{{item.id}}" disabled></div>
+      <div class="form-group input-group">
+        <label class="input-group-addon input-group-addon-primary addon-left">标签</label>
+        <input type="text" class="form-control" ng-model="item.label"></div>
+      <div class="panel panel-danger contextual-example-panel bootstrap-panel">
+        <div class="panel-heading">路由控制</div>
+        <div class="panel-body">
+          <div class="col-md-4" ng-repeat="v in state">
+            <label class="checkbox-inline custom-checkbox nowrap">
+              <input type="checkbox"  ng-model="v.value" ng-disabled="v.disabled">
+              <span ng-bind="v.title"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="form-group input-group">
+        <label class="input-group-addon input-group-addon-primary addon-left">注册时间</label>
+        <input type="text" class="form-control" value="{{item.ctime*1000 | date:'y-MM-dd HH:mm:ss'}}" disabled></div>
+      <div class="form-group input-group">
+        <label class="input-group-addon input-group-addon-primary addon-left">更新时间</label>
+        <input type="text" class="form-control" value="{{item.utime*1000 | date:'y-MM-dd HH:mm:ss'}}" disabled></div>
+      <div class="text-right">
+        <span >
+          <button type="submit" class="btn btn-primary btn-with-icon" ng-click="update()"> <i class="fa fa-save"></i>
+            保存
+          </button>
+        </span>
+
+      </form>
+    </div>
+  </div>
+</div>

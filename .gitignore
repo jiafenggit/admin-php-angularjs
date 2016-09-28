@@ -1,0 +1,9 @@
+bower_components
+node_modules
+.tmp
+.idea
+build
+server/application/config/database.php
+server/application/views/*
+test
+!errors

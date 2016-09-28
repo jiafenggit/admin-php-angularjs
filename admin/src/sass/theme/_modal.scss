@@ -1,0 +1,27 @@
+.detail-page{
+  .form-control[disabled]{
+    color: #ddd;
+    border-color: #fff;
+    background-color: #607d8b;
+  }
+  span.ng-hide{
+    display: none !important;
+  }
+  .edit{
+    .form-control[disabled]{
+      color: #ddd;
+      border-color: #fff;
+      background-color: #9e9e9e;
+    }
+    .animate-show{
+      opacity: 1;
+    }
+    .animate-show.ng-hide-add,
+    .animate-show.ng-hide-remove{
+      transition: all linear 1s;
+    }
+    .animate-show.ng-hide{
+      opacity: 0;
+    }
+  }
+}

@@ -1,0 +1,28 @@
+<div class="modal-content">
+  <div class="modal-header">
+    <button type="button" class="close" ng-click="$dismiss()" aria-label="Close"> <em class="fa fa-close"></em>
+    </button>
+    <h4 class="modal-title" id="myModalLabel" >管理员添加</h4>
+  </div>
+  <div class="modal-body">
+    <form class="container-fluid">
+      <div class="form-group input-group">
+        <label class="input-group-addon input-group-addon-primary addon-left">账号</label>
+        <input type="text" class="form-control" ng-model="item.username" placeholder="请输入手机号码或邮箱号作为您的账户"></div>
+      <div class="form-group input-group">
+        <label class="input-group-addon input-group-addon-primary addon-left">昵称</label>
+        <input type="text" class="form-control" ng-model="item.name" placeholder="请输入昵称。由中文、字母、数字或符号组成。"></div>
+      <div class="form-group input-group ">
+        <label class="input-group-addon input-group-addon-primary addon-left">密码</label>
+        <input type="password" class="form-control addon-left" ng-model="item.password" placeholder="请设置登录密码，由数字与字母组成  "></div>
+      <div class="form-group input-group">
+        <label class="input-group-addon input-group-addon-primary addon-left">权限组</label>
+        <select class="form-control"   ng-model="item.role"  ng-options="s.id as s.label for s in roles" ></select>
+      </div>
+      <div></div>
+      <div class="text-right">
+        <button type="submit" class="btn btn-danger" ng-click="create()">提交</button>
+      </form>
+    </div>
+  </div>
+</div>

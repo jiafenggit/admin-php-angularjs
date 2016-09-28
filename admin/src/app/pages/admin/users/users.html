@@ -1,0 +1,66 @@
+<div class="row">
+	<div class="col-md-12">
+		<div ba-panel ba-panel-title="管理员列表" ba-panel-class="with-scroll">
+			<div class="horizontal-scroll">
+				<table class="table table-bordered">
+					<thead>
+						<tr>
+							<th class="col-md-1">UID</th>
+							<th class="col-md-1">账号</th>
+							<th class="col-md-1">昵称</th>
+							<th class="col-md-1">权限组</th>
+							<th class="col-md-2 text-center">操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr ng-repeat="item in collections">
+							<td>{{::item.uid}}</td>
+							<td>{{::item.username}}</td>
+							<td>{{::item.name}}</td>
+							<td>{{::item.role | role:roles}}</td>
+							<td class="text-center">
+								<button class="btn btn-info btn-xs" ng-click="show(item)">详细</button>
+								<button class="btn btn-danger btn-xs" ng-click="remove(item)">删除</button>
+							</td>
+						</tr>
+					</tbody>
+					<tfoot>
+						<tr>
+							<td>
+								<div>
+									记录:
+									<span ng-bind="count"></span>
+									条
+								</div>
+								<div>
+									页码:
+									<span ng-bind="pages.select"></span>
+									/
+									<span ng-bind="pages.count"></span>
+								</div>
+							</td>
+							<td colspan="3" class="text-center">
+								<nav>
+									<ul  class="pagination">
+										<li>
+											<a ng-click="select(1)">首页</a>
+										</li>
+										<li ng-repeat="v in pages.list" ng-class="{'active':v == pages.select}">
+											<a ng-bind="v" ng-click="select(v)"></a>
+										</li>
+										<li>
+											<a ng-click="select(pages.count)">末页</a>
+										</li>
+									</ul>
+								</nav>
+							</td>
+							<td colspan="1" class="text-center">
+								<button class="btn btn-warning" ng-click="create()">添加管理员</button>
+							</td>
+						</tr>
+					</tfoot>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
