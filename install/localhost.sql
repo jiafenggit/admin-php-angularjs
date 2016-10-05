@@ -11,11 +11,6 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
 
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
 --
 -- 資料庫： `userinfo`
 --
@@ -122,6 +117,46 @@ ALTER TABLE `admin_role`
 --
 ALTER TABLE `token_key`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+
+/*------------------------   2016-10-05  -------------------*/
+
+--
+-- 資料表結構 `resource_controller`
+--
+
+CREATE TABLE `resource_controller` (
+  `id` int(11) NOT NULL,
+  `controller` varchar(20) NOT NULL,
+  `resource` varchar(20) NOT NULL,
+  `tbl` varchar(20) NOT NULL,
+  `rule` varchar(6000) NOT NULL,
+  `tbl_key` varchar(10) NOT NULL,
+  `query_field` varchar(1000) NOT NULL,
+  `get_field` varchar(1000) NOT NULL,
+  `create_field` varchar(1000) NOT NULL,
+  `update_field` varchar(1000) NOT NULL,
+  `status` int(2) NOT NULL,
+  `utime` int(11) NOT NULL,
+  `ctime` int(11) NOT NULL
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- 已匯出資料表的索引
+--
+
+--
+-- 資料表索引 `resource_controller`
+--
+ALTER TABLE `resource_controller`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- 在匯出的資料表使用 AUTO_INCREMENT
+--
+
+--
+-- 使用資料表 AUTO_INCREMENT `resource_controller`
+--
+ALTER TABLE `resource_controller`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;

@@ -3,7 +3,7 @@
 class Admin_user_model extends MY_Model {  
 
   //校验数组
-    private $rules = array(
+    protected $rules = array(
             'uid' => array(
                     'field'=>'uid',
                     'label'=>'用户编号',

@@ -19,14 +19,10 @@ class Admin extends REST_Controller {
       // $this->load->model('admin/Admin_user_model','users');
       // $this->load->model('admin/Admin_role_model','roles');
       $this->load->model('MY_Model');
-      $c = $this->MY_Model->create();
-      $this->{$c['resource'].'_'.$c['method']} = function(){
-        echo '233';
-      }; 
   }
   public function _remap($method, $params = array())  
   {  
-    var_dump($this);   
+    $this->MY_Model->filter_string();
   }
 
   public function info_get()

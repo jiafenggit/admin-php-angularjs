@@ -2,20 +2,90 @@
 if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class MY_Model extends CI_Model {
-  public $a = 1;
+  
+  protected $_rules = array();
+  protected $_tbl = NULL; 
+  protected $_tbl_key = NULL;
+  protected $_query_field = NULL;
+  protected $_get_field = NULL;
+  protected $_create_field = NULL;
+  protected $_update_field = NULL;
+
 	function __construct()
 	{
-	    parent::__construct();
+	  parent::__construct();
 	}
  
-  public function create()
+  public function query($query)
   {
-    $res = array(
-      'resource' => 'add',
-      'method' => 'get'
-      );
-    return  $res;
+    $limit = isset($query['limit']) ? $query['limit'] : 0;
+    $offset = isset($query['offset']) ? $query['offset'] : 0;
+    $fields = isset($query['fields']) ? $this->field_intersect($query['fields'],$this->$_query_field) : $this->$_query_field;
+    $sort = isset($query['sort']) ? $this->sort_string($query['sort']) : $this->_tbl_key . ' DESC';
+    $sql = $this->db
+      ->from($this->_tbl)
+      ->group_start()
+        ->where('status',1)
+        ->or_where('status',0)
+      ->group_end();
+    if(isset($query['filter']))
+    {
+      $filter = $this->where($query['filter'],$fields);
+      if($filter === false)
+      {
+        return array(
+          'status' => false,
+          'errors' => array('filter' => 'Your filter parameters has errots!')
+        )
+      }
+      $sql = $sql->where($filter);
+    } 
+    $last_sql = clone($sql);
+    $count = $last_sql->count_all_results(); 
+    $sql = $sql->select($fields)
+      ->limit($limit,$offset)
+      ->order_by($sort);
+    return array(
+        'count' => $count,
+        'resourcies' => $sql->get()->result_array()
+    );
   }
+ 
+  function get($key)
+  {
+    $result = $this->db->from($this->_tbl)
+      ->select($this->_get_field)
+      ->where($this->_tbl_key, $key)
+      ->get()
+      ->result_array();
+    $resource = count($result) === 0 ? NULL : result[0];
+    return $resource;
+  }
+
+  function create($resource)
+  { 
+    $data = array(
+     'label' => $req['label'],
+    'power' => $req['power'],
+    );
+        $valid = $this->validation('create',$data,$this->rules);
+        $res = array(
+          'code' => $valid['code'],
+          'msg' => $valid['msg']
+        );
+
+        if($res['code'] == 1){
+              $data = $valid['data'];
+              $data['ctime'] = $data['utime'] = time();
+              $data['status'] = 1;
+              $this->db->insert($this->tbl, $data);
+              $res = array(
+                'code' => '1',
+                'msg' => '创建成功'
+              );
+        }
+      return $res;
+    }
 
   public function remove($id)
   {
@@ -26,6 +96,39 @@ class MY_Model extends CI_Model {
     $this->db->where($this->tbl_key,$id)
          ->update($this->tbl, $data);
     return $this->db->affected_rows() > 0;
+  }
+
+  protected function filter_string($input, $default)
+  { 
+    $fields = substr( preg_replace('/(.*?)(<=|>=|<|=|>)(.*?),/',',$1',$input.','), 1);
+    $fields_arr = array_intersect( explode(',',$fields), explode(',',$default));
+    $filter = '';
+    $filter_arr = explode(',', substr( preg_replace('/(.*?)(<=|>=|<|=|>)(.*?),/',',$1 $2 \'$3\'',$input.','), 1));
+    foreach ($fields_arr as $k => $v) {
+      $filter .= ' AND ' . $filter_arr[$k];
+    }
+    return substr($filter,5);
+  }
+
+  protected function sort_string($input)
+  {
+    $sort_arr = explode(',',$input);
+    $sort = '';
+    foreach ($sort_arr as $k => $v) {
+      if(strpos($k,'-') === 0)
+      {
+        $sort .= substr($k,1) . ' DESC';
+        continue;
+      }
+      $sort .= $k . ' ASC';
+    }
+    return $sort;
+  }
+
+  protected function field_intersect($input,$default)
+  {
+    $arr = array_intersect( explode(',',$input) , explode(',',$default) );
+    return join(',',$arr);
   }
 
   protected function validation($method, $data, $rules)
@@ -42,10 +145,7 @@ class MY_Model extends CI_Model {
   
   protected function _valid($method, $data, $rules)
   {
-    $valid = array(
-       'data' => array(),
-       'rules' => array()
-    );
+    $valid = array('data' => array(),'rules' => array());
     foreach ($data as $key => $value) {
       if($method === 'update')
       { 
