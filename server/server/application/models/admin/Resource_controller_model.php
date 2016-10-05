@@ -2,10 +2,19 @@
 
 class Resource_controller_model extends MY_Model {  
 
-    public function __construct()
+    public function __construct($config = NULL)
     {  
-      $this->tbl = 'resource_controller';
-      $this->tbl_key = 'id';  
+      if(isset($config))
+      {
+        foreach ($config as $k => $v) {
+          $this->{'set_'.$k}($v);
+        }
+      }
+      else
+      {
+        $this->_tbl = 'resource_controller';
+        $this->_tbl_key = 'id';  
+      }
       parent::__construct();    
     }
  
@@ -19,12 +28,21 @@ class Resource_controller_model extends MY_Model {
 
     public function get_resource($query)
     { 
-      $fields ='tbl,tbl_key,rule,query_field,get_field,post_field,put_field';
+      $fields ='tbl,tbl_key,rules,query_field,get_field,post_field,put_field';
       $this->db
         ->from($this->tbl)
         ->select($fields)
         ->where('controller', $query['controller'])
         ->where('resource', $query['resource'])
         ->get()->result_array();
+    }
+
+    public function Resource()
+    { 
+      $config = array(
+        'tbl' => 'user',
+        'tbl_key' =>'uid'
+      );
+      return new $this($config);
     }
 }

@@ -36,7 +36,7 @@ class MY_Model extends CI_Model {
         return array(
           'status' => false,
           'errors' => array('filter' => 'Your filter parameters has errots!')
-        )
+        );
       }
       $sql = $sql->where($filter);
     } 
@@ -96,6 +96,41 @@ class MY_Model extends CI_Model {
     $this->db->where($this->tbl_key,$id)
          ->update($this->tbl, $data);
     return $this->db->affected_rows() > 0;
+  }
+  
+  public function set_rules($rules)
+  {
+    $this->_rules = $rules;
+  }
+
+  public function set_tbl($tbl)
+  {
+    $this->_tbl = $tbl;
+  }
+
+  public function set_tbl_key($key)
+  {
+    $this->_tbl_key = $key;
+  }
+
+  public function set_query_field($field)
+  {
+    $$this->_query_field = $field;
+  }
+
+  public function set_get_field($field)
+  {
+    $this->_get_field = $field;
+  }
+
+  public function set_create_field($field)
+  {
+    $this->_create_field = $field;
+  }
+
+  public function set_update_field($field)
+  {
+    $this->_update_field = $field;
   }
 
   protected function filter_string($input, $default)

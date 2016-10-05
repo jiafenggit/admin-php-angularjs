@@ -18,11 +18,12 @@ class Admin extends REST_Controller {
       // }
       // $this->load->model('admin/Admin_user_model','users');
       // $this->load->model('admin/Admin_role_model','roles');
-      $this->load->model('MY_Model');
+      $this->load->model('admin/Resource_controller_model','RC');
   }
   public function _remap($method, $params = array())  
   {  
-    $this->MY_Model->filter_string();
+    var_dump($this->RC->Resource());
+    var_dump($this->RC);
   }
 
   public function info_get()

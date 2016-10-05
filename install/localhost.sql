@@ -130,7 +130,7 @@ CREATE TABLE `resource_controller` (
   `controller` varchar(20) NOT NULL,
   `resource` varchar(20) NOT NULL,
   `tbl` varchar(20) NOT NULL,
-  `rule` varchar(6000) NOT NULL,
+  `rules` varchar(6000) NOT NULL,
   `tbl_key` varchar(10) NOT NULL,
   `query_field` varchar(1000) NOT NULL,
   `get_field` varchar(1000) NOT NULL,
