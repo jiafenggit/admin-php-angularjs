@@ -141,6 +141,10 @@ CREATE TABLE `resource_controller` (
   `ctime` int(11) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
+INSERT INTO `resource_controller` (`id`, `controller`, `resource`, `tbl`, `rules`, `tbl_key`, `query_field`, `get_field`, `create_field`, `update_field`, `status`, `utime`, `ctime`) VALUES
+(1, 'admin', 'roles', 'admin_role', '{"id": {"label": "权级", "rules": "trim|required|numeric", "errors": {"required": "{field}未设置", "numeric": "请输入正确的{field}"} }, "label": {"label": "标签", "rules": "trim|required", "errors": {"required": "{field}未设置"} }, "power": {"label": "权限", "rules": "trim|required", "errors": {"required": "{field}未设置"} } }', 'id', 'id,label,power,utime,ctime', 'id,label,power,utime,ctime', 'label,power', 'label,power,status', 1, 1473404039, 1473404039),
+(0, 'admin', 'users', 'admin_info', '{"username": {"label": "用户名", "rules": "trim|required", "errors": {"required": "{field}未设置"} }, "name": {"label": "昵称", "rules": "trim|required", "errors": {"required": "{field}未设置"} }, "password": {"label": "密码", "rules": "trim|required|min_length[5]|md5", "errors": {"required": "{field}未设置", "min_length": "{field}不能低于{param}位数"} }, "role": {"label": "权限组", "rules": "trim|required|numeric", "errors": {"required": "{field}未设置", "numeric": "{field}格式不正确"} } }', 'uid', 'uid,username,name,role', 'uid,username,name,role,ip,utime,ctime', 'username,name,role', 'username,name,role', 1, 1473404039, 1473404039);
+
 --
 -- 已匯出資料表的索引
 --

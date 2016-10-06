@@ -20,7 +20,7 @@ class MY_Model extends CI_Model {
   {
     $limit = isset($query['limit']) ? $query['limit'] : 0;
     $offset = isset($query['offset']) ? $query['offset'] : 0;
-    $fields = isset($query['fields']) ? $this->field_intersect($query['fields'],$this->$_query_field) : $this->$_query_field;
+    $fields = isset($query['fields']) ? $this->field_intersect($query['fields'],$this->_query_field) : $this->_query_field;
     $sort = isset($query['sort']) ? $this->sort_string($query['sort']) : $this->_tbl_key . ' DESC';
     $sql = $this->db
       ->from($this->_tbl)
@@ -41,14 +41,13 @@ class MY_Model extends CI_Model {
       $sql = $sql->where($filter);
     } 
     $last_sql = clone($sql);
-    $count = $last_sql->count_all_results(); 
-    $sql = $sql->select($fields)
+    $count = $last_sql->count_all_results();
+    $this->output->set_header('X-Total-Count: '.$count); 
+    return $sql->select($fields)
       ->limit($limit,$offset)
-      ->order_by($sort);
-    return array(
-        'count' => $count,
-        'resourcies' => $sql->get()->result_array()
-    );
+      ->order_by($sort)
+      ->get()
+      ->result_array();
   }
  
   function get($key)
@@ -58,36 +57,47 @@ class MY_Model extends CI_Model {
       ->where($this->_tbl_key, $key)
       ->get()
       ->result_array();
-    $resource = count($result) === 0 ? NULL : result[0];
+    $resource = count($result) === 0 ? NULL : $result[0];
     return $resource;
   }
 
   function create($resource)
   { 
-    $data = array(
-     'label' => $req['label'],
-    'power' => $req['power'],
-    );
-        $valid = $this->validation('create',$data,$this->rules);
-        $res = array(
-          'code' => $valid['code'],
-          'msg' => $valid['msg']
-        );
-
-        if($res['code'] == 1){
-              $data = $valid['data'];
-              $data['ctime'] = $data['utime'] = time();
-              $data['status'] = 1;
-              $this->db->insert($this->tbl, $data);
-              $res = array(
-                'code' => '1',
-                'msg' => '创建成功'
-              );
-        }
-      return $res;
+    $valid = $this->validation($resource,'create');
+    if($valid['status'] === true)
+    {
+      $resource = $valid['resource'];
+      $resource['ctime'] = $resource['utime'] = time();
+      $resource['status'] = 1;
+      $this->db->insert($this->_tbl, $resource);
+      return array('status' => true);
     }
+    return $valid;
+  }
 
-  public function remove($id)
+  function update($resource)
+  {
+    $key = $resource['id'];
+    $valid = $this->validation($resource,'update');
+    if($valid['status'] === true)
+    {
+      $resource = $valid['resource'];
+      $resource['utime'] = time();
+      $this->db
+        ->where($this->_tbl_key,$key)
+        ->update($this->_tbl, $resource);
+      if( $this->db->affected_rows() < 1)
+      {
+        $valid = array(
+          'status'=> false,
+          'errors'=> array('更新失败') 
+        );
+      }
+    }
+    return $valid;
+  }
+
+  public function remove($key)
   {
     $data = array(
       'status' => -1,
@@ -98,11 +108,6 @@ class MY_Model extends CI_Model {
     return $this->db->affected_rows() > 0;
   }
   
-  public function set_rules($rules)
-  {
-    $this->_rules = $rules;
-  }
-
   public function set_tbl($tbl)
   {
     $this->_tbl = $tbl;
@@ -113,9 +118,26 @@ class MY_Model extends CI_Model {
     $this->_tbl_key = $key;
   }
 
+  public function set_rules($input)
+  {
+    $rules  = array();
+    $object = json_decode($input);
+    foreach ($object as $k => $v) {
+      $rules[$k] = array(
+          'field' => $k,
+          'label' => $v->label,
+          'rules' => $v->rules,
+          'errors' => (array)$v->errors
+        );
+    }
+    $this->_rules = $rules;
+  }
+
+
+
   public function set_query_field($field)
   {
-    $$this->_query_field = $field;
+    $this->_query_field = $field;
   }
 
   public function set_get_field($field)
@@ -166,32 +188,32 @@ class MY_Model extends CI_Model {
     return join(',',$arr);
   }
 
-  protected function validation($method, $data, $rules)
+  protected function validation($resource,$method)
   {
   	$this->load->library('form_validation');
-  	$valid = $this->_valid($method,$data,$rules);
-  	$this->form_validation->set_data($valid['data']);
-  	$this->form_validation->set_rules($valid['rules']);
-  	$res['code'] = $this->form_validation->run()?1:0;
-  	$res['msg'] = $this->form_validation->error_array();
-  	$res['data'] = $this->form_validation->validation_data;
-  	return $res;
+    $field = array_flip( explode(',', $this->{'_'.$method.'_field'} ) );
+    $data = array_intersect_key($resource,$field);
+    if($method ==='update')
+    {
+      $rules = array_intersect_key($this->_rules,$data);
+    }
+    else
+    {
+      $rules = array_intersect_key($this->_rules,$field);
+    }
+  	$this->form_validation->set_data($data);
+  	$this->form_validation->set_rules($rules);
+  	if($this->form_validation->run() === false)
+    {
+      return array(
+        'status' => false,
+        'errors' => $this->form_validation->error_array()
+      );
+    }
+  	return array(
+      'status' => true,
+      'resource' => $this->form_validation->validation_data
+    );
   }
   
-  protected function _valid($method, $data, $rules)
-  {
-    $valid = array('data' => array(),'rules' => array());
-    foreach ($data as $key => $value) {
-      if($method === 'update')
-      { 
-         if($value === NULL)
-         {
-           continue;
-         }
-      }
-      $valid['data'][$key] = $value;
-      $valid['rules'][$key] = @$rules[$key];
-    }
-    return $valid;
-  } 
 }

@@ -23,26 +23,37 @@ class Resource_controller_model extends MY_Model {
       return $this->db
         ->where('controller', $query['controller'])
         ->where('resource', $query['resource'])
-        ->count_all_results($this->tbl) > 0;
+        ->count_all_results($this->_tbl) > 0;
+    }
+    public function get_method($req)
+    {
+      switch ($req->method) {
+        case 'get':
+          $method = isset($req->arg['id']) ? 'get' : 'query';
+          break;
+        case 'post':
+          $method = 'create';
+          break;
+        case 'put':
+          $method = 'update';
+          break;
+        case 'delete':
+          $method = 'remove';
+          break;   
+      }
+      return $method;
     }
 
-    public function get_resource($query)
+    public function get_resource($query,$method)
     { 
-      $fields ='tbl,tbl_key,rules,query_field,get_field,post_field,put_field';
-      $this->db
-        ->from($this->tbl)
+      $fields = 'tbl,tbl_key,rules,'. $method . '_field';
+      $result = $this->db
+        ->from($this->_tbl)
         ->select($fields)
         ->where('controller', $query['controller'])
         ->where('resource', $query['resource'])
         ->get()->result_array();
-    }
-
-    public function Resource()
-    { 
-      $config = array(
-        'tbl' => 'user',
-        'tbl_key' =>'uid'
-      );
-      return new $this($config);
+      $resource = count($result) === 0 ? NULL : $result[0];
+      return new $this($resource);
     }
 }
