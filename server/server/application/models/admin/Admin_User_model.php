@@ -13,13 +13,13 @@ class Admin_user_model extends MY_Model {
       'field'=>'name',
       'label'=>'昵称',
       'rules'=>'trim|required',
-      'errors' => array('required' => '{field}不能为空')
+      'errors' => array('required' => '{field}未设置')
     ),
     'password' => array(
       'field'=>'password',
       'label'=>'密码',
       'rules'=>'trim|required|min_length[5]|md5',
-      'errors' => array('required' => '{field}不能为空', 'min_length' => '{field}不能低于{param}位数') 
+      'errors' => array('required' => '{field}未设置', 'min_length' => '{field}不能低于{param}位数') 
     ),
     'role' => array(
       'field'=>'role',

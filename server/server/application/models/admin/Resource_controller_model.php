@@ -44,14 +44,14 @@ class Resource_controller_model extends MY_Model {
       return $method;
     }
 
-    public function get_resource($query,$method)
+    public function get_resource($req)
     { 
-      $fields = 'tbl,tbl_key,rules,'. $method . '_field';
+      $fields = 'tbl,tbl_key,rules,'. $req['method'] . '_field';
       $result = $this->db
         ->from($this->_tbl)
         ->select($fields)
-        ->where('controller', $query['controller'])
-        ->where('resource', $query['resource'])
+        ->where('controller', $req['controller'])
+        ->where('resource', $req['resource'])
         ->get()->result_array();
       $resource = count($result) === 0 ? NULL : $result[0];
       return new $this($resource);
