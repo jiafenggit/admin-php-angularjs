@@ -10,9 +10,9 @@ class Admin extends REST_Controller {
     $this->output->enable_profiler(TRUE);
     $this->load->database();
 
-    $this->load->model('admin/Key_model','token'); 
-    $token = $this->input->get_request_header('authorization', TRUE);
-    ($token && $this->token->key_exists($token)) || $this->response('',401); 
+    // $this->load->model('admin/Key_model','token'); 
+    // $token = $this->input->get_request_header('authorization', TRUE);
+    // ($token && $this->token->key_exists($token)) || $this->response('',401); 
 
     $this->load->model('admin/Resource_controller_model','RC');
     $this->load->model('admin/Admin_user_model','users');
@@ -22,6 +22,10 @@ class Admin extends REST_Controller {
 
   public function _remap($resource, $params = array())  
   {  
+    if(isset($params[0]) && $params[0] === 'info'){
+      var_dump($params);
+    }
+    return;
     $this->request->arg = $this->{$this->request->method}();
     $request = array(
        'controller' => $this->router->class,
@@ -38,7 +42,7 @@ class Admin extends REST_Controller {
       {
        $this->response('Resource Not Found', REST_Controller::HTTP_NOT_FOUND);
       }
-      $this->resourcies = $this->RC->get_resource($request)
+      $this->resourcies = $this->RC->get_resource($request);
     }
     $this->{'resourcies_'.$request['method']}($this->request);
   }

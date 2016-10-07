@@ -1,62 +1,60 @@
 <?php  if(!defined('BASEPATH')) exit('No direct script access allowed');
+/*
+   
+*/
+class Key_model extends CI_Model {  
 
-class Auth_model extends CI_Model {  
+    public function __construct()
+    {  
+      $this->tbl = 'token_key';  
+      $this->tbl_key = 'id';  
+      parent::__construct();    
+    }
 
-  public function __construct()
-  {  
-    parent::__construct();    
-  }
+   public function generate_key()
+   {
+      do
+      {
+          // Generate a random salt
+          $salt = base_convert(bin2hex($this->security->get_random_bytes(64)), 16, 36);
 
-  public function a($req,$rules)
-  {
-    if(is_object($rules))
-    {
-      foreach ($rules as $controller => $value) {
-        if($controller === $req['controller'] && is_object($value))
-        {
-          foreach ($value as $resource => $v) {
-            if($resource === $req['resource'])
-            {
-              if($r)
-              $haystack = $this->
-              in_array(, haystack)
-            }
+          // If an error occurred, then fall back to the previous method
+          if ($salt === FALSE)
+          {
+              $salt = hash('sha256', time() . mt_rand());
           }
-        }
-        return false
-      }
-      return false
-    }
-    return false;
-  }
 
-  protected function role_array($number)
-  {
-    switch ($number) {
-      case '0':
-        return array();
-        break;
-      case '1':
-        return array('query','get');
-        break;
-      case '2':
-        return array('create','update');
-        break;
-      case '3':
-        return array('remove');
-        break;
-      case '4':
-        return array('query','get','create','update');
-        break;
-      case '5':
-        return array('query','get','remove');
-        break;
-      case '6':
-        return array('create','update','remove');
-        break;
-      case '7':
-        return array('query','get','create','update','remove');
-        break;
+          $new_key = substr($salt, 0, 40);
+      }
+      while ($this->key_exists($new_key));
+
+      return $new_key;
     }
-  }
+    public function get_key($key)
+      {
+          return $this->db
+              ->where('key', $key)
+              ->get($this->tbl)
+              ->row();
+      }
+
+    public function key_exists($key)
+    {
+        return $this->db
+            ->where('key', $key)
+            ->count_all_results($this->tbl) > 0;
+    }
+
+    public function insert_key($req)
+    {
+        $data = array(
+           'key' =>$req['key'],
+           'uid' => $req['uid']
+          );
+        $data['ctime'] = $data['utime'] = function_exists('now') ? now() : time();
+
+        return $this->db
+            ->set($data)
+            ->insert($this->tbl);
+    }
 }
