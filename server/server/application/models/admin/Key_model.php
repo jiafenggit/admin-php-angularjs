@@ -30,12 +30,37 @@ class Key_model extends CI_Model {
 
       return $new_key;
     }
-    public function get_key($key)
+    public function get_user($key)
       {
-          return $this->db
-              ->where('key', $key)
-              ->get($this->tbl)
-              ->row();
+        $result = $this->db
+          ->select('uid')
+          ->where('key', $key)
+          ->get($this->tbl)
+          ->row();
+        $user = $this->db
+          ->select('uid,username,name,role')
+          ->where('uid',$result->uid)
+          ->where('status', 1)
+          ->get('admin_info')
+          ->row();
+        if(isset($user))
+        {
+          return false;
+        }
+        $role = $this->db
+          ->select('label,power,resource')
+          ->where('id',$user->role)
+          ->where('status', 1)
+          ->get('admin_role')
+          ->row();
+        if(isset($user))
+        {
+          return false;
+        }
+        $user->role = $role->label;
+        $user->power = json_decode($role->power);
+        $user->resource = json_decode($role->resource);
+        return $user;
       }
 
     public function key_exists($key)

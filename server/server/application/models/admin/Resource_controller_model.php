@@ -25,25 +25,7 @@ class Resource_controller_model extends MY_Model {
         ->where('resource', $query['resource'])
         ->count_all_results($this->_tbl) > 0;
     }
-    public function get_method($req)
-    {
-      switch ($req->method) {
-        case 'get':
-          $method = isset($req->arg['id']) ? 'get' : 'query';
-          break;
-        case 'post':
-          $method = 'create';
-          break;
-        case 'put':
-          $method = 'update';
-          break;
-        case 'delete':
-          $method = 'remove';
-          break;   
-      }
-      return $method;
-    }
-
+    
     public function get_resource($req)
     { 
       $fields = 'tbl,tbl_key,rules,'. $req['method'] . '_field';

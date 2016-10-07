@@ -18,8 +18,6 @@ class MY_Model extends CI_Model {
  
   public function query($query)
   {
-    $limit = isset($query['limit']) ? $query['limit'] : 0;
-    $offset = isset($query['offset']) ? $query['offset'] : 0;
     $fields = isset($query['fields']) ? $this->field_intersect($query['fields'],$this->_query_field) : $this->_query_field;
     $sort = isset($query['sort']) ? $this->sort_string($query['sort']) : $this->_tbl_key . ' DESC';
     $sql = $this->db
@@ -42,9 +40,12 @@ class MY_Model extends CI_Model {
     } 
     $last_sql = clone($sql);
     $count = $last_sql->count_all_results();
-    $this->output->set_header('X-Total-Count: '.$count); 
+    $this->output->set_header('X-Total-Count: '.$count);
+    if(isset($query['limit'])){
+      $offset = isset($query['offset']) ? $query['offset'] : 0;
+      $sql = $sql->imit($query['limit'],$offset);
+    }
     return $sql->select($fields)
-      ->limit($limit,$offset)
       ->order_by($sort)
       ->get()
       ->result_array();
@@ -133,8 +134,24 @@ class MY_Model extends CI_Model {
     $this->_rules = $rules;
   }
 
-
-
+  public function get_method($req)
+    {
+      switch ($req->method) {
+        case 'get':
+          $method = isset($req->arg['id']) ? 'get' : 'query';
+          break;
+        case 'post':
+          $method = 'create';
+          break;
+        case 'put':
+          $method = 'update';
+          break;
+        case 'delete':
+          $method = 'remove';
+          break;   
+      }
+      return $method;
+    }
   public function set_query_field($field)
   {
     $this->_query_field = $field;

@@ -17,9 +17,11 @@ class Auth_model extends CI_Model {
           foreach ($value as $resource => $v) {
             if($resource === $req['resource'])
             {
-              if($r)
-              $haystack = $this->
-              in_array(, haystack)
+              $methods = $this->role_array($v->role);
+              if(in_array($req['method'], $methods))
+              {
+                return $v->field;
+              }
             }
           }
         }
