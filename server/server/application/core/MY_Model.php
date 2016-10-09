@@ -134,24 +134,6 @@ class MY_Model extends CI_Model {
     $this->_rules = $rules;
   }
 
-  public function get_method($req)
-    {
-      switch ($req->method) {
-        case 'get':
-          $method = isset($req->arg['id']) ? 'get' : 'query';
-          break;
-        case 'post':
-          $method = 'create';
-          break;
-        case 'put':
-          $method = 'update';
-          break;
-        case 'delete':
-          $method = 'remove';
-          break;   
-      }
-      return $method;
-    }
   public function set_query_field($field)
   {
     $this->_query_field = $field;

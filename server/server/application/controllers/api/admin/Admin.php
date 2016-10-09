@@ -10,27 +10,20 @@ class Admin extends REST_Controller {
     $this->output->enable_profiler(TRUE);
     $this->load->database();
 
-    $this->load->model('admin/Key_model','token'); 
-    $token = $this->input->get_request_header('authorization', TRUE);
-    ($token && $this->token->key_exists($token)) || $this->response('',401); 
-    $this->_user = $this->token->get_user($token);
-    if($this->_user === false || $this->_user->resource !== '*')
-    {
-      $this->response('',401);
-    }
-    $this->load->model('admin/Admin_user_model','users');
-    $this->load->model('admin/Admin_role_model','roles');
+    // $this->load->model('Auth_model ','auth'); 
+    // $this->auth->run() || $this->response('',401);
+    // $this->load->model('admin/Admin_user_model','users');
+    // $this->load->model('admin/Admin_role_model','roles');
     
   }
 
   public function _remap($resource, $params = array())  
   { 
-    if($resource ==='users' && isset($params[0]) && $params[0] === 'info')
-    {
-      $res = $this->roles->query(array('fields'=>'id,label'));
-      $this->response($res,200);
-    } 
     $this->request->arg = $this->{$this->request->method}();
+    $this->request->controller = $this->router->class;
+    $this->request->resource = $resource;
+    var_dump($this->request);
+    return;
     if(isset($this->{$resource}))
     {
       $this->resourcies = $this->{$resource};
@@ -39,11 +32,7 @@ class Admin extends REST_Controller {
     {
      $this->response('Resource Not Found',404);
     }
-    $request = array(
-      'controller' => $this->router->class,
-      'resource' => $resource,
-      'method' => $this->{$resource}->get_method($this->request)
-    );
+   
     $this->{'resourcies_'.$request['method']}($this->request);
   }
 
