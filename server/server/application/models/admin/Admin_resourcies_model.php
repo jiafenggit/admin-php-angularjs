@@ -6,12 +6,49 @@ class Admin_user_model extends MY_Model {
   protected $_tbl = 'resource_controller';
   protected $_tbl_key = 'id';  
   protected $_query_field = 'id,controller,resource,tbl,tbl_key';
-  protected $_get_field = 'id,controller,resource,tbl,tbl_key,query_field,get_field,create_field,update_field,status,utime,ctime';
-  protected $_create_field = 'controller,resource,tbl,tbl_key,query_field,get_field,create_field,update_field';
+  protected $_get_field = 'id,controller,resource';
+  protected $_create_field = 'controller,resource';
   protected $_update_field = '';
+  protected $_controller = array(
+    'extend' => 'admin/Extend_tg1_model',
+  );
   public function __construct()
   {  
     parent::__construct();    
   }
-  
+
+  function create($resource)
+  { 
+    $valid = $this->validation($resource,'create');
+    if($valid['status'] === true)
+    { 
+      $resource = $valid['resource'];
+      if(isset($this->_controller[$resource['controller']]))
+      {
+        $this->load->model($this->_controller[$resource['controller']],'resourcies');
+        if(!$data = $this->resourcies->create_resource($resource['resource']))
+        {
+          return array(
+            'status'=>false,
+            'errors'=> array('控制器不存在')
+          );
+        }
+        $valid['controller'] = $data['controller'];
+        $valid['resource'] = $data['resource'];
+        $valid['tbl'] = $data['tbl'];
+      }
+      else
+      {
+        return array(
+          'status'=>false,
+          'errors'=> array('创建失败')
+        );
+      }
+      $resource['ctime'] = $resource['utime'] = time();
+      $resource['status'] = 1;
+      $this->db->insert($this->_tbl, $resource);
+      return array('status' => true);
+    }
+    return $valid;
+  }
 }

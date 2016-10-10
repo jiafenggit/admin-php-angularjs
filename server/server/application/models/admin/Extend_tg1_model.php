@@ -83,6 +83,10 @@ class Extend_tg1_model extends MY_Model {
           'type'=>'INT',
           'constraint'=>11
       ),
+      'status'=> array(
+         'type'=>'INT',
+         'constraint'=>2
+      ),
       'utime'=> array(
           'type'=>'INT',
          'constraint'=>11
