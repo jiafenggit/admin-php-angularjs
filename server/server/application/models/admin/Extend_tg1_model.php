@@ -40,7 +40,7 @@ class Extend_tg1_model extends MY_Model {
     parent::__construct();
     if(isset($config))
     {
-      $this->set_tbl =$config->tbl;
+      $this->set_tbl = $config->tbl;
     }    
   }
 
@@ -104,15 +104,6 @@ class Extend_tg1_model extends MY_Model {
 
   public function get_resource($req)
   { 
-      $fields = 'tbl,tbl_key,rules,'. $req['method'] . '_field';
-      $result = $this->db
-        ->from($this->_tbl)
-        ->select($fields)
-        ->where('controller', $req['controller'])
-        ->where('resource', $req['resource'])
-        ->get()->result_array();
-      $resource = count($result) === 0 ? NULL : $result[0];
-      return new $this($resource);
   }
 
 }

@@ -1,8 +1,21 @@
 <?php  if(!defined('BASEPATH')) exit('No direct script access allowed');
 
-class Admin_user_model extends MY_Model {  
-
-  protected $_rules = array();
+class Admin_resourcies_model extends MY_Model {  
+  
+  protected $_rules = array(
+    'controller' => array(
+      'field'=>'controller',
+      'label'=>'控制器',
+      'rules'=>'trim|required',
+      'errors' => array('required' => '{field}未设置')
+    ),
+    'resource' => array(
+      'field'=>'resource',
+      'label'=>'资源',
+      'rules'=>'trim|required',
+      'errors' => array('required' => '{field}未设置')
+    )
+  );
   protected $_tbl = 'resource_controller';
   protected $_tbl_key = 'id';  
   protected $_query_field = 'id,controller,resource,tbl,tbl_key';
@@ -25,12 +38,12 @@ class Admin_user_model extends MY_Model {
       $resource = $valid['resource'];
       if(isset($this->_controller[$resource['controller']]))
       {
-        $this->load->model($this->_controller[$resource['controller']],'resourcies');
-        if(!$data = $this->resourcies->create_resource($resource['resource']))
+        $this->load->model('admin/Extend_tg1_model','rs');
+        if(!$data = $this->rs->create_resource($resource['resource']))
         {
           return array(
             'status'=>false,
-            'errors'=> array('控制器不存在')
+            'errors'=> array('创建失败')
           );
         }
         $valid['controller'] = $data['controller'];
@@ -41,8 +54,9 @@ class Admin_user_model extends MY_Model {
       {
         return array(
           'status'=>false,
-          'errors'=> array('创建失败')
+          'errors'=> array('控制器不存在')
         );
+       
       }
       $resource['ctime'] = $resource['utime'] = time();
       $resource['status'] = 1;
