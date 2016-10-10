@@ -40,7 +40,7 @@ class Extend_tg1_model extends MY_Model {
     parent::__construct();
     if(isset($config))
     {
-      $this->set_tbl = $config->tbl;
+      $this->set_tbl($config['tbl']);
     }    
   }
 
@@ -102,8 +102,10 @@ class Extend_tg1_model extends MY_Model {
     return $data;
   }
 
-  public function get_resource($req)
+  public function get_resource($tbl)
   { 
+    $config = array('tbl'=>$tbl);
+    return new $this($config);
   }
 
 }

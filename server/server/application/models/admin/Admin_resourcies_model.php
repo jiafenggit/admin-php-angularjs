@@ -18,9 +18,9 @@ class Admin_resourcies_model extends MY_Model {
   );
   protected $_tbl = 'resource_controller';
   protected $_tbl_key = 'id';  
-  protected $_query_field = 'id,controller,resource,tbl,tbl_key';
+  protected $_query_field = 'id,controller,resource,tbl';
   protected $_get_field = 'id,controller,resource';
-  protected $_create_field = 'controller,resource';
+  protected $_create_field = 'controller,resource,tbl';
   protected $_update_field = '';
   protected $_controller = array(
     'extend' => 'admin/Extend_tg1_model',
@@ -38,7 +38,7 @@ class Admin_resourcies_model extends MY_Model {
       $resource = $valid['resource'];
       if(isset($this->_controller[$resource['controller']]))
       {
-        $this->load->model('admin/Extend_tg1_model','rs');
+        $this->load->model($this->_controller[$resource['controller']],'rs');
         if(!$data = $this->rs->create_resource($resource['resource']))
         {
           return array(
@@ -46,9 +46,9 @@ class Admin_resourcies_model extends MY_Model {
             'errors'=> array('创建失败')
           );
         }
-        $valid['controller'] = $data['controller'];
-        $valid['resource'] = $data['resource'];
-        $valid['tbl'] = $data['tbl'];
+        $resource['controller'] = $data['controller'];
+        $resource['resource'] = $data['resource'];
+        $resource['tbl'] = $data['tbl'];
       }
       else
       {
@@ -62,6 +62,49 @@ class Admin_resourcies_model extends MY_Model {
       $resource['status'] = 1;
       $this->db->insert($this->_tbl, $resource);
       return array('status' => true);
+    }
+    return $valid;
+  }
+
+  public function new_resource($resource)
+  { 
+    $valid = $this->validation($resource,'create');
+    if($valid['status'] === true)
+    { 
+      $resource = $valid['resource'];
+      if(isset($this->_controller[$resource['controller']]))
+      { 
+        $result = $this->db
+          ->select('tbl')
+          ->where('controller',$resource['controller'])
+          ->where('resource', $resource['resource'])
+          ->get($this->_tbl)
+          ->row();
+        if(!$result)
+        {
+          return array(
+            'status'=>false,
+            'errors'=> array('资源不存在')
+          );
+        }
+        $this->load->model($this->_controller[$resource['controller']],'rs');
+        if(!$data = $this->rs->get_resource($result->tbl))
+        {
+          return array(
+            'status'=>false,
+            'errors'=> array('创建失败')
+          );
+        }
+        return $data;      
+      }
+      else
+      {
+        return array(
+          'status'=>false,
+          'errors'=> array('控制器不存在')
+        );
+       
+      }
     }
     return $valid;
   }
