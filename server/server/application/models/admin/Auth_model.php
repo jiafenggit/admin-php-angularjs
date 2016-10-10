@@ -2,8 +2,7 @@
 
 class Auth_model extends CI_Model {  
   
-  protected $_pass = FALSE;
-  protected $_uid = NULL; 
+  protected $_user = NULL; 
 
   public function __construct()
   {  
@@ -11,81 +10,79 @@ class Auth_model extends CI_Model {
     $this->load->model('admin/Key_model','token');    
   } 
   
-  public function run($token)
+  public function run()
   {
-    $token = $this->input->get_request_header('authorization', TRUE);
+    // $token = $this->input->get_request_header('authorization', TRUE);
+    $token = '1';
     if($token && $this->token->key_exists($token))
     {
-      return $this->token->get_key($token);
+      $result =  $this->token->get_key($token);
+      $this->set_user($result->uid);
+      return true;
     }
-    return $this->_pass;
+    return false;
+  }
+  
+  public function get_user($key = NULL)
+  {
+    if ($key === NULL)
+    {
+      return $this->_user;
+    }
+    return isset($this->_user[$key]) ? $this->_user[$key] : NULL;
   }
 
-  public function get_role($key)
+  public function set_user($key)
   {
     $this->load->driver('cache', array('adapter' => 'apc', 'backup' => 'file'));
+    $user = $this->_get_user($key);
+    $user['role'] = $this->_get_role($user['role']);
+    $this->_user = $user; 
+  }
+
+  public function is_pass($req,$rules)
+  {
+    $method = $this->get_method($req);
+    if($rules === '*')
+    {
+      return array(
+        'method' => $method,
+        'fields' => '*'
+      );
+    }
+    $rules = json_decode($rules);
+    if(isset($rules->{$req->controller}->{$req->resource}->$method))
+    {
+      return array(
+        'method' => $method,
+        'fields' => $rules->{$req->controller}->{$req->resource}->$method
+      );
+    }
+    return false;
+  }
+  
+  protected function _get_role($key)
+  {
     if(!$role = $this->cache->get('resourcies_admin_roles_'.$key))
     {
       $this->load->model('admin/Admin_role_model','roles');
-      if(!$role = $this->roles->get($key))
-      { 
-        $this->cache->save('resourcies_admin_roles_'.$key,$role,86400)
-        return $role;
-      }
-      return false;
+      $role = $this->roles->get($key);
+      $this->cache->save('resourcies_admin_roles_'.$key,$role,86400);
+      return $role;
     }
     return $role;
   }
 
-  public function get_user($key)
-  {
-    $this->load->driver('cache', array('adapter' => 'apc', 'backup' => 'file'));
+  protected function _get_user($key)
+  { 
     if(!$user = $this->cache->get('resourcies_admin_users_'.$key))
     {
       $this->load->model('admin/Admin_user_model','users');
-      if(!$user = $this->users->get($key))
-      { 
-        $this->cache->save('resourcies_admin_users_'.$key,$user,86400)
-        return $user;
-      }
-      return false;
+      $user = $this->users->get($key); 
+      $this->cache->save('resourcies_admin_users_'.$key,$user,86400);
+      return $user;
     }
     return $user;
-  }
-
-
-  public function is_pass($req,$rules)
-  {
-    if($rules === '*')
-    {
-      return array(
-        'method' => $this->get_method($req);
-        'filed' => '*';
-      );
-    }
-    else
-    {
-      foreach ($rules as $controller => $value) {
-        if($controller === $req->controller && is_object($value))
-        {
-          foreach ($value as $resource => $v) {
-            if($resource === $req->resource)
-            {
-              $methods = $this->role_array($v->role);
-              $method = $this->get_method($req);
-              if(in_array($method, $methods))
-              {
-                return array(
-                  'method' => $method,
-                  'filed' => isset($V->filed) ? $v->filed : NULL;
-                  );
-              }
-            }
-          }
-        }
-        return false
-      }
-      return false
   }
 
   protected function get_method($req)
@@ -105,34 +102,5 @@ class Auth_model extends CI_Model {
         break;   
     }
     return $method;
-  }
-  protected function role_array($number)
-  {
-    switch ($number) {
-      case '0':
-        return array();
-        break;
-      case '1':
-        return array('query','get');
-        break;
-      case '2':
-        return array('create','update');
-        break;
-      case '3':
-        return array('remove');
-        break;
-      case '4':
-        return array('query','get','create','update');
-        break;
-      case '5':
-        return array('query','get','remove');
-        break;
-      case '6':
-        return array('create','update','remove');
-        break;
-      case '7':
-        return array('query','get','create','update','remove');
-        break;
-    }
   }
 }

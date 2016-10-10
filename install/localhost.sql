@@ -49,7 +49,8 @@ INSERT INTO `admin_info` (`uid`, `username`, `name`, `password`, `role`, `status
 CREATE TABLE `admin_role` (
   `id` int(11) NOT NULL,
   `label` varchar(255) NOT NULL,
-  `power` varchar(255) NOT NULL,
+  `router` varchar(6535) NOT NULL,
+  `resource` varchar(6535) NOT NULL,
   `status` int(11) NOT NULL,
   `utime` int(11) NOT NULL,
   `ctime` int(11) NOT NULL
@@ -59,8 +60,8 @@ CREATE TABLE `admin_role` (
 -- 資料表的匯出資料 `admin_role`
 --
 
-INSERT INTO `admin_role` (`id`, `label`, `power`, `status`, `utime`, `ctime`) VALUES
-(0, '超级管理员', '*', 1, 1475039129, 1475039129);
+INSERT INTO `admin_role` (`id`, `label`, `router`,`resource`, `status`, `utime`, `ctime`) VALUES
+(0, '超级管理员', '*', '*',1, 1475039129, 1475039129);
 
 -- --------------------------------------------------------
 

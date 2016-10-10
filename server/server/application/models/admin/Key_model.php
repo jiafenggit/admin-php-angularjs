@@ -2,9 +2,6 @@
 
 class Key_model extends CI_Model {  
  
-  protected $_uid = NULL;
-  protected $_uid = NULL;
-
   public function __construct()
   {  
     $this->tbl = 'token_key';  
@@ -55,7 +52,7 @@ class Key_model extends CI_Model {
   public function get_key($key)
   {
      return $this->db
-      ->select('uid,role')
+      ->select('uid')
       ->where('key', $key)
       ->get($this->tbl)
       ->row();

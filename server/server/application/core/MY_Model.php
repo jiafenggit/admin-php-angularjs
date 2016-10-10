@@ -16,9 +16,10 @@ class MY_Model extends CI_Model {
 	  parent::__construct();
 	}
  
-  public function query($query)
+  public function query($query,$fields = NULL)
   {
-    $fields = isset($query['fields']) ? $this->field_intersect($query['fields'],$this->_query_field) : $this->_query_field;
+    $fields = isset($fields) ? $this->field_intersect($fields,$this->_query_field) : $this->_query_field;
+    $fields = isset($query['fields']) ? $this->field_intersect($query['fields'],$fields) : $fields;
     $sort = isset($query['sort']) ? $this->sort_string($query['sort']) : $this->_tbl_key . ' DESC';
     $sql = $this->db
       ->from($this->_tbl)
@@ -43,7 +44,7 @@ class MY_Model extends CI_Model {
     $this->output->set_header('X-Total-Count: '.$count);
     if(isset($query['limit'])){
       $offset = isset($query['offset']) ? $query['offset'] : 0;
-      $sql = $sql->imit($query['limit'],$offset);
+      $sql = $sql->limit($query['limit'],$offset);
     }
     return $sql->select($fields)
       ->order_by($sort)
