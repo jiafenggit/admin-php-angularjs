@@ -56,7 +56,7 @@ class MY_Model extends CI_Model {
   {
     $fields = isset($fields) ? $this->field_intersect($fields,$this->_get_field) : $this->_get_field;
     $result = $this->db->from($this->_tbl)
-      ->select($this->_get_field)
+      ->select($fields)
       ->where($this->_tbl_key, $key)
       ->get()
       ->result_array();
