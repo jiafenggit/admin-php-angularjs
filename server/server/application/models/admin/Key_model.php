@@ -52,10 +52,10 @@ class Key_model extends CI_Model {
         ->insert($this->tbl);
   }
   
-  public function get_user($key)
+  public function get_key($key)
   {
      return $this->db
-      ->select('uid')
+      ->select('uid,role')
       ->where('key', $key)
       ->get($this->tbl)
       ->row();

@@ -10,34 +10,31 @@ class Admin extends REST_Controller {
     $this->output->enable_profiler(TRUE);
     $this->load->database();
 
-    // $this->load->model('Auth_model ','auth'); 
-    // $this->auth->run() || $this->response('',401);
-    // $this->load->model('admin/Admin_user_model','users');
-    // $this->load->model('admin/Admin_role_model','roles');
-    
+    $this->load->model('Auth_model ','auth');
+    if( !$this->_token = $this->auth->run())
+    {
+      $this->response('',401);
+    }
+    $this->load->model('admin/Admin_user_model','users');
+    $this->load->model('admin/Admin_role_model','roles'); 
   }
 
   public function _remap($resource, $params = array())  
   { 
+    $role = $this->auth->get_role($this->_token['role']);
+
     $this->request->arg = $this->{$this->request->method}();
     $this->request->controller = $this->router->class;
     $this->request->resource = $resource;
-    var_dump($this->request);
-    return;
-    if(isset($this->{$resource}))
-    {
-      $this->resourcies = $this->{$resource};
-    }
-    else
-    {
-     $this->response('Resource Not Found',404);
-    }
-   
-    $this->{'resourcies_'.$request['method']}($this->request);
+
+    $result = $this->auth->is_pass($this->request,$role['resource']);
+    var_dump($result);
   }
 
   public function resourcies_query($req)
   { 
+    var_dump($this->resourcies);
+    return;
     $resourcies = $this->resourcies->query($req->arg);
     $this->response($resourcies,200);
   }

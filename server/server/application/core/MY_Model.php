@@ -51,8 +51,9 @@ class MY_Model extends CI_Model {
       ->result_array();
   }
  
-  function get($key)
+  function get($key,$fields = NULL)
   {
+    $fields = isset($fields) ? $this->field_intersect($fields,$this->_get_field) : $this->_get_field;
     $result = $this->db->from($this->_tbl)
       ->select($this->_get_field)
       ->where($this->_tbl_key, $key)
@@ -76,9 +77,15 @@ class MY_Model extends CI_Model {
     return $valid;
   }
 
-  function update($resource)
+  function update($resource,$fields = NULL)
   {
     $key = $resource['id'];
+    unset($resource['id']);
+    if(isset($fields))
+    {
+      $field = array_flip( explode(',',$fields) );
+      $resource = array_intersect_key($resource,$field);
+    }
     $valid = $this->validation($resource,'update');
     if($valid['status'] === true)
     {

@@ -11,75 +11,74 @@ class Auth_model extends CI_Model {
     $this->load->model('admin/Key_model','token');    
   } 
   
-  public function index($token)
+  public function run($token)
   {
-    $key = $this->input->get_request_header('authorization', TRUE);
-    if($key && $this->token->key_exists($token))
+    $token = $this->input->get_request_header('authorization', TRUE);
+    if($token && $this->token->key_exists($token))
     {
-      $this->_pass = true;
-      $this->_uid = $this->db
-        ->select('uid')
-        ->where('key', $key)
-        ->get($this->tbl)
-        ->row()
-        ->uid;
+      return $this->token->get_key($token);
     }
     return $this->_pass;
   }
 
-  public function get_rosource($role)
+  public function get_role($key)
   {
-    $this->db
-      ->select('power')
-      ->where('key', $key)
-      ->get($this->tbl)
-      ->row();
+    $this->load->driver('cache', array('adapter' => 'apc', 'backup' => 'file'));
+    if(!$role = $this->cache->get('resourcies_admin_roles_'.$key))
+    {
+      $this->load->model('admin/Admin_role_model','roles');
+      if(!$role = $this->roles->get($key))
+      { 
+        $this->cache->save('resourcies_admin_roles_'.$key,$role,86400)
+        return $role;
+      }
+      return false;
+    }
+    return $role;
   }
 
-  public function get_userinfo($key)
+  public function get_user($key)
   {
-    $result = 
-    $user = $this->db
-      ->select('uid,username,name,role')
-      ->where('uid',$result->uid)
-      ->where('status', 1)
-      ->get('admin_info')
-      ->row();
-    if(isset($user))
+    $this->load->driver('cache', array('adapter' => 'apc', 'backup' => 'file'));
+    if(!$user = $this->cache->get('resourcies_admin_users_'.$key))
     {
+      $this->load->model('admin/Admin_user_model','users');
+      if(!$user = $this->users->get($key))
+      { 
+        $this->cache->save('resourcies_admin_users_'.$key,$user,86400)
+        return $user;
+      }
       return false;
     }
-    $role = $this->db
-      ->select('label,power,resource')
-      ->where('id',$user->role)
-      ->where('status', 1)
-      ->get('admin_role')
-      ->row();
-    if(isset($user))
-    {
-      return false;
-    }
-    $user->role = $role->label;
-    $user->power = json_decode($role->power);
-    $user->resource = json_decode($role->resource);
     return $user;
   }
 
 
-  public function a($req,$rules)
+  public function is_pass($req,$rules)
   {
-    if(is_object($rules))
+    if($rules === '*')
+    {
+      return array(
+        'method' => $this->get_method($req);
+        'filed' => '*';
+      );
+    }
+    else
     {
       foreach ($rules as $controller => $value) {
-        if($controller === $req['controller'] && is_object($value))
+        if($controller === $req->controller && is_object($value))
         {
           foreach ($value as $resource => $v) {
-            if($resource === $req['resource'])
+            if($resource === $req->resource)
             {
               $methods = $this->role_array($v->role);
-              if(in_array($req['method'], $methods))
+              $method = $this->get_method($req);
+              if(in_array($method, $methods))
               {
-                return $v->field;
+                return array(
+                  'method' => $method,
+                  'filed' => isset($V->filed) ? $v->filed : NULL;
+                  );
               }
             }
           }
@@ -87,10 +86,26 @@ class Auth_model extends CI_Model {
         return false
       }
       return false
-    }
-    return false;
   }
 
+  protected function get_method($req)
+  {
+    switch ($req->method) {
+      case 'get':
+        $method = isset($req->arg['id']) ? 'get' : 'query';
+        break;
+      case 'post':
+        $method = 'create';
+        break;
+      case 'put':
+        $method = 'update';
+        break;
+      case 'delete':
+        $method = 'remove';
+        break;   
+    }
+    return $method;
+  }
   protected function role_array($number)
   {
     switch ($number) {

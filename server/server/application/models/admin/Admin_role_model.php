@@ -9,9 +9,15 @@ class Admin_role_model extends MY_Model {
       'rules'=>'trim|required',
       'errors' => array('required' => '{field}未设置')
     ),
-    'power' => array(
-      'field'=>'role',
-      'label'=>'权限',
+    'router' => array(
+      'field'=>'router',
+      'label'=>'路由',
+      'rules'=>'trim|required',
+      'errors' => array('required' => '{field}未设置')
+    ),
+    'resource' => array(
+      'field'=>'resource',
+      'label'=>'资源',
       'rules'=>'trim|required',
       'errors' => array('required' => '{field}未设置')
     ),
@@ -24,10 +30,10 @@ class Admin_role_model extends MY_Model {
   );
   protected $_tbl = 'admin_role';
   protected $_tbl_key = 'id';  
-  protected $_query_field = 'id,label,power,utime,ctime';
-  protected $_get_field = 'id,label,power,utime,ctime';
-  protected $_create_field = 'label,power';
-  protected $_update_field = 'label,power,status';
+  protected $_query_field = 'id,label,utime,ctime';
+  protected $_get_field = 'id,label,router,resource,utime,ctime';
+  protected $_create_field = 'label,router,resource';
+  protected $_update_field = 'label,router,resource,status';
 
   public function __construct()
   {  
