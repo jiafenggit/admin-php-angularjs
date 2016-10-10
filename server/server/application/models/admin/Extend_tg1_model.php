@@ -80,7 +80,7 @@ class Extend_tg1_model extends MY_Model {
           'constraint'=>12
       ),
       'ip' => array(
-          'type'=>'DATETIME',
+          'type'=>'INT',
           'constraint'=>11
       ),
       'utime'=> array(
@@ -88,7 +88,7 @@ class Extend_tg1_model extends MY_Model {
          'constraint'=>11
       ),
       'ctime' => array(
-          'type'=>'DATETIME',
+          'type'=>'INT',
           'constraint'=>11
       )
     );
