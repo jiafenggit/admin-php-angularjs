@@ -1,12 +1,3 @@
--- phpMyAdmin SQL Dump
--- version 4.5.5.1
--- http://www.phpmyadmin.net
---
--- 主機: 127.0.0.1
--- 產生時間： 2016-09-28 06:31:04
--- 伺服器版本: 5.7.11
--- PHP 版本： 5.6.19
-
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
@@ -33,12 +24,14 @@ CREATE TABLE `admin_info` (
   `ip` int(11) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
---
--- 資料表的匯出資料 `admin_info`
---
-
 INSERT INTO `admin_info` (`uid`, `username`, `name`, `password`, `role`, `status`, `utime`, `ctime`, `ip`) VALUES
 (0, 'admin', 'admin', 'e10adc3949ba59abbe56e057f20f883e', 0, 1, 1475044139, 1473404039, 0);
+
+ALTER TABLE `admin_info`
+  ADD PRIMARY KEY (`uid`);
+
+ALTER TABLE `admin_info`
+  MODIFY `uid` int(11) NOT NULL AUTO_INCREMENT;
 
 -- --------------------------------------------------------
 
@@ -56,12 +49,14 @@ CREATE TABLE `admin_role` (
   `ctime` int(11) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
---
--- 資料表的匯出資料 `admin_role`
---
-
 INSERT INTO `admin_role` (`id`, `label`, `router`,`resource`, `status`, `utime`, `ctime`) VALUES
 (0, '超级管理员', '*', '*',1, 1475039129, 1475039129);
+
+ALTER TABLE `admin_role`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `admin_role`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 -- --------------------------------------------------------
 
@@ -77,50 +72,15 @@ CREATE TABLE `token_key` (
   `ctime` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- 已匯出資料表的索引
---
-
---
--- 資料表索引 `admin_info`
---
-ALTER TABLE `admin_info`
-  ADD PRIMARY KEY (`uid`);
-
---
--- 資料表索引 `admin_role`
---
-ALTER TABLE `admin_role`
-  ADD PRIMARY KEY (`id`);
-
---
--- 資料表索引 `token_key`
---
 ALTER TABLE `token_key`
   ADD PRIMARY KEY (`id`);
 
---
--- 在匯出的資料表使用 AUTO_INCREMENT
---
-
---
--- 使用資料表 AUTO_INCREMENT `admin_info`
---
-ALTER TABLE `admin_info`
-  MODIFY `uid` int(11) NOT NULL AUTO_INCREMENT;
---
--- 使用資料表 AUTO_INCREMENT `admin_role`
---
-ALTER TABLE `admin_role`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
---
--- 使用資料表 AUTO_INCREMENT `token_key`
---
 ALTER TABLE `token_key`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 
-/*------------------------   2016-10-05  -------------------*/
+
+-- --------------------------------------------------------
 
 --
 -- 資料表結構 `resource_controller`
@@ -131,37 +91,17 @@ CREATE TABLE `resource_controller` (
   `controller` varchar(20) NOT NULL,
   `resource` varchar(20) NOT NULL,
   `tbl` varchar(20) NOT NULL,
-  `rules` varchar(6000) NOT NULL,
-  `tbl_key` varchar(10) NOT NULL,
-  `query_field` varchar(1000) NOT NULL,
-  `get_field` varchar(1000) NOT NULL,
-  `create_field` varchar(1000) NOT NULL,
-  `update_field` varchar(1000) NOT NULL,
+  `model` varchar(100) NOT NULL,
   `status` int(2) NOT NULL,
   `utime` int(11) NOT NULL,
   `ctime` int(11) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-INSERT INTO `resource_controller` (`id`, `controller`, `resource`, `tbl`, `rules`, `tbl_key`, `query_field`, `get_field`, `create_field`, `update_field`, `status`, `utime`, `ctime`) VALUES
-(1, 'admin', 'roles', 'admin_role', '{"id": {"label": "权级", "rules": "trim|required|numeric", "errors": {"required": "{field}未设置", "numeric": "请输入正确的{field}"} }, "label": {"label": "标签", "rules": "trim|required", "errors": {"required": "{field}未设置"} }, "power": {"label": "权限", "rules": "trim|required", "errors": {"required": "{field}未设置"} } }', 'id', 'id,label,power,utime,ctime', 'id,label,power,utime,ctime', 'label,power', 'label,power,status', 1, 1473404039, 1473404039),
-(0, 'admin', 'users', 'admin_info', '{"username": {"label": "用户名", "rules": "trim|required", "errors": {"required": "{field}未设置"} }, "name": {"label": "昵称", "rules": "trim|required", "errors": {"required": "{field}未设置"} }, "password": {"label": "密码", "rules": "trim|required|min_length[5]|md5", "errors": {"required": "{field}未设置", "min_length": "{field}不能低于{param}位数"} }, "role": {"label": "权限组", "rules": "trim|required|numeric", "errors": {"required": "{field}未设置", "numeric": "{field}格式不正确"} } }', 'uid', 'uid,username,name,role', 'uid,username,name,role,ip,utime,ctime', 'username,name,role', 'username,name,role', 1, 1473404039, 1473404039);
+INSERT INTO `resource_controller` (`id`, `controller`, `resource`, `tbl`, `model`, `status`, `utime`, `ctime`) VALUES
+(0, 'admin', 'users', 'admin_info', 'Admin_user_model', 1, 1473404039, 1473404039),
+(1, 'admin', 'roles', 'admin_role', 'Admin_role_model', 1, 1473404039, 1473404039),
 
---
--- 已匯出資料表的索引
---
-
---
--- 資料表索引 `resource_controller`
---
 ALTER TABLE `resource_controller`
   ADD PRIMARY KEY (`id`);
-
---
--- 在匯出的資料表使用 AUTO_INCREMENT
---
-
---
--- 使用資料表 AUTO_INCREMENT `resource_controller`
---
 ALTER TABLE `resource_controller`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2
