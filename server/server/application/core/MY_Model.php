@@ -117,6 +117,17 @@ class MY_Model extends CI_Model {
     return $this->db->affected_rows() > 0;
   }
   
+  public  function get_info()
+  {
+    return array(
+      'query' => $this->_query_field,
+      'get' => $this->_get_field, 
+      'create' => $this->_create_field, 
+      'update' => $this->_update_field,
+      'remove' => ''
+    );
+  }
+
   public function set_tbl($tbl)
   {
     $this->_tbl = $tbl;
