@@ -16,7 +16,7 @@ class MY_Model extends CI_Model {
 	  parent::__construct();
 	}
  
-  public function query($query,$fields = NULL)
+  public function query($query = array(),$fields = NULL)
   {
     $fields = isset($fields) ? $this->field_intersect($fields,$this->_query_field) : $this->_query_field;
     $fields = isset($query['fields']) ? $this->field_intersect($query['fields'],$fields) : $fields;

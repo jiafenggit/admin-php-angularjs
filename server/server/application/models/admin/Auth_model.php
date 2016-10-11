@@ -85,7 +85,7 @@ class Auth_model extends CI_Model {
     return $user;
   }
 
-  protected function get_method($req)
+  public function get_method($req)
   {
     switch ($req->method) {
       case 'get':
