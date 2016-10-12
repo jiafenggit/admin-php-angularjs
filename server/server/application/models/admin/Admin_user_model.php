@@ -65,14 +65,14 @@ class Admin_user_model extends MY_Model {
     return $valid;
   }
 
-  public function auth($req)
+  public function auth($res)
   { 
     $this->_create_field = 'username,password';
-    $valid = $this->validation($resource,'auth');
+    $valid = $this->validation($res,'create');
     if($valid['status'] === true)
     {  
       $resource = $valid['resource'];
-      $results = $this->db->from($this->tbl)
+      $results = $this->db->from($this->_tbl)
         ->select('uid,username,password,name,role')
         ->where('username',$resource['username'])
         ->where('status',1)
@@ -97,7 +97,7 @@ class Admin_user_model extends MY_Model {
         $user = $results[0];
         unset($user['password']);
         $valid = array(
-          'status' => false,
+          'status' => true,
           'info' => $user
         );
       }

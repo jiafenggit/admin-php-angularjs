@@ -9,16 +9,14 @@ class Auth extends CI_Controller {
 		$this->load->model('admin/Admin_user_model','user');
 		$req = $this->input->post();
 		$res = $this->user->auth($req);
-		if($res['code'] == 1 ){
-			$this->load->model('admin/Key_model','token');
-			$key = $this->token->generate_key();
-			$data = array(
-				'key' => $key,
-				'uid' => $res['data']['uid']
-				); 
-	        $this->token->insert_key($data);
-	        unset($res['data']);
-	        $res['token'] = $key;
+		if($res['status'] === true)
+		{
+           $this->load->model('admin/Key_model','token');
+           $key = $this->token->generate_key();
+           $data = array('key' => $key,'uid' => $res['info']['uid']);
+           $this->token->insert_key($data);
+           unset($res['info']);
+           $res['token'] = $key; 
 		}
 		echo json_encode($res);
 	}

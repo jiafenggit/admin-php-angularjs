@@ -67,25 +67,37 @@
     $scope.user = {
       username: "",
       password: "",
+      status:true,
       signin: function() {
+        var s = this;
+        if(!s.status)
+        {
+          toastr.warning('请不要频繁提交', '提示');
+          return;
+        }
+        s.status = false;
+        $timeout(function(){
+          s.status = true;
+        },1000);
         var data = {
           username: this.username,
           password: this.password
         };
         $http.post("/api/admin/auth/signin", data).then(function(res) {
           var d = res.data;
-          if (d.code != 1) {
-            angular.forEach(d.msg, function(v) {
-              toastr.warning(v, '提示');
-            })
-          } else {
-            $cookies.put('token', res.data.token);
+          if (d.status) {
+            $cookies.put('token', d.token);
             toastr.success('登陆成功');
             $timeout(function() {
               location.href = './';
             }, 1000)
+          } else {
+            angular.forEach(d.errors, function(v) {
+              toastr.warning(v, '提示');
+            })
           }
         })
+
       }
     }
   }
