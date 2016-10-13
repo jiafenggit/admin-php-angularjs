@@ -12,22 +12,21 @@ class Admin extends REST_Controller {
   {
     parent::__construct();
     // $this->output->enable_profiler(TRUE);
-    $this->load->database();
+    // $this->load->database();
     
-    $this->load->model('admin/Auth_model','auth');
-    if($this->auth->run() === false)
-    {
-      $this->response('',401);
-    }
+    // $this->load->model('admin/Auth_model','auth');
+    // if($this->auth->run() === false)
+    // {
+    //   $this->response('',401);
+    // }
   }
 
   public function _remap($resource, $params = array())  
   { 
-    $this->request->controller = $this->router->class;
-    $this->request->resource = $resource;
-    $this->request->arg = $this->{$this->request->method}();
-
-    if(!$result = $this->auth->is_pass($this->request))
+    $a = '  ';
+    var_dump( empty($a));
+    return;
+    if(!$result = $this->auth->is_pass($this->router->class, $resource,$this->request->method))
     { 
       $this->response('',401);
     }

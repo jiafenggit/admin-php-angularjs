@@ -39,69 +39,48 @@ class Auth_model extends CI_Model {
     $this->_user = $user; 
   }
 
-  public function is_pass($req)
+  public function is_pass($ctr,$res,$method)
   {
-    $method = $this->get_method($req);
     $role = $this->get_user('role');
     $rules = $role['resource'];
     if($rules === '*')
     {
-      return array(
-        'method' => $method,
-        'fields' => '*'
-      );
+      return  '*';
     }
     $rules = json_decode($rules);
-    if(isset($rules->{$req->controller}->{$req->resource}->$method))
+
+    if(isset($rules->$ctr->$res) && !empty(trim($rules->$ctr->$res->fields)) )
     {
-      return array(
-        'method' => $method,
-        'fields' => $rules->{$req->controller}->{$req->resource}->$method
-      );
-    }
+      if(in_array($method,$rules->$ctr->$res->method))
+      {
+        return  $rules->$ctr->$res->fields;
+      }
+      return false;
+    } 
     return false;
   }
   
   protected function _get_role($key)
   {
-    if(!$role = $this->cache->get('resourcies_admin_roles_'.$key))
-    {
+    // if(!$role = $this->cache->get('resourcies_admin_roles_'.$key))
+    // {
       $this->load->model('admin/Admin_role_model','roles');
       $role = $this->roles->get($key,'id,label,router,resource');
       $this->cache->save('resourcies_admin_roles_'.$key,$role,86400);
       return $role;
-    }
-    return $role;
+    // }
+    // return $role;
   }
 
   protected function _get_user($key)
   { 
-    if(!$user = $this->cache->get('resourcies_admin_users_'.$key))
-    {
+    // if(!$user = $this->cache->get('resourcies_admin_users_'.$key))
+    // {
       $this->load->model('admin/Admin_user_model','users');
       $user = $this->users->get($key,'uid,username,name,role'); 
-      $this->cache->save('resourcies_admin_users_'.$key,$user,86400);
+      // $this->cache->save('resourcies_admin_users_'.$key,$user,86400);
       return $user;
-    }
-    return $user;
-  }
-
-  public function get_method($req)
-  {
-    switch ($req->method) {
-      case 'get':
-        $method = isset($req->arg['id']) ? 'get' : 'query';
-        break;
-      case 'post':
-        $method = 'create';
-        break;
-      case 'put':
-        $method = 'update';
-        break;
-      case 'delete':
-        $method = 'remove';
-        break;   
-    }
-    return $method;
+    // }
+    // return $user;
   }
 }
