@@ -12,8 +12,7 @@ class Auth_model extends CI_Model {
   
   public function run()
   {
-    // $token = $this->input->get_request_header('authorization', TRUE);
-    $token = '1';
+    $token = $this->input->get_request_header('authorization', TRUE);
     if($token && $this->token->key_exists($token))
     {
       $result =  $this->token->get_key($token);
@@ -40,9 +39,11 @@ class Auth_model extends CI_Model {
     $this->_user = $user; 
   }
 
-  public function is_pass($req,$rules)
+  public function is_pass($req)
   {
     $method = $this->get_method($req);
+    $role = $this->get_user('role');
+    $rules = $role['resource'];
     if($rules === '*')
     {
       return array(
@@ -66,7 +67,7 @@ class Auth_model extends CI_Model {
     if(!$role = $this->cache->get('resourcies_admin_roles_'.$key))
     {
       $this->load->model('admin/Admin_role_model','roles');
-      $role = $this->roles->get($key);
+      $role = $this->roles->get($key,'id,label,router,resource');
       $this->cache->save('resourcies_admin_roles_'.$key,$role,86400);
       return $role;
     }
@@ -78,7 +79,7 @@ class Auth_model extends CI_Model {
     if(!$user = $this->cache->get('resourcies_admin_users_'.$key))
     {
       $this->load->model('admin/Admin_user_model','users');
-      $user = $this->users->get($key); 
+      $user = $this->users->get($key,'uid,username,name,role'); 
       $this->cache->save('resourcies_admin_users_'.$key,$user,86400);
       return $user;
     }

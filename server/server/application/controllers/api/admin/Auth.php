@@ -20,4 +20,16 @@ class Auth extends CI_Controller {
 		}
 		echo json_encode($res);
 	}
+
+	public function info()
+	{
+		$this->load->database();
+		$this->load->model('admin/Auth_model','auth');
+		if($this->auth->run() === false)
+	    {
+	      show_error('Unauthorized',401);
+	      return;
+	    }
+		echo json_encode($this->auth->get_user());
+	}
 }

@@ -31,8 +31,8 @@
       // Intercept 401s and redirect you to login
       responseError: function(response) {
         if (response.status === 401) {
-          location.href = './auth.html';
-          $cookies.remove('token');
+          // location.href = './auth.html';
+          // $cookies.remove('token');
         }
         return $q.reject(response);
       }

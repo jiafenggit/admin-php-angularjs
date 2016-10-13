@@ -4,7 +4,8 @@
 	angular.module('Admin.pages.admin.users')
 		.controller('AdminUsersCtrl', AdminUsersCtrl);
 
-	function AdminUsersCtrl($scope, $http, $uibModal, toastr, Util, roles, MyResource) {
+	function AdminUsersCtrl($scope, $http, $uibModal, toastr, Util,  MyResource) {
+		var roles =1;
 		var Collection, s = $scope;
 		Collection = MyResource.create('admin', 'users', 'uid');
 		s.roles = roles;

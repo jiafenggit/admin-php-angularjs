@@ -4,15 +4,17 @@
  */
 (function() {
   'use strict';
-
+  var i = 0;
   angular.module('Admin.theme')
     .run(themeRun);
 
   /** @ngInject */
-  function themeRun($timeout, $rootScope, $q, baSidebarService, MeResource, MyResource) {
+  function themeRun($timeout, $rootScope, $q, $state, baSidebarService, MeResource, MyResource) {
     var whatToWait = [MeResource.load(), MyResource.load()];
 
-
+    $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams, options) {
+      MeResource.isAuthenticated(toState.name) || event.preventDefault();
+    });
     $q.all(whatToWait).then(function() {
       $rootScope.$pageFinishedLoading = true;
     });

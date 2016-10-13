@@ -2,15 +2,7 @@
   'use strict';
 
   angular.module('Admin.pages.admin.roles', [])
-    .config(routeConfig)
-    .run(function($rootScope, MeResource, $state) {
-      $rootScope.$on('$stateChangeStart', function(event, next) {
-        MeResource.info.$promise.then(function(data) {
-          MeResource.isAuthenticated(data.power, next.name) || $state.go('home');
-        })
-
-      });
-    });;
+    .config(routeConfig);
 
   /** @ngInject */
   function routeConfig($stateProvider) {

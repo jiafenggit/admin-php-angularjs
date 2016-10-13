@@ -63,10 +63,10 @@
         };
 
         function defineMenuItemStates() {
-          var power, route, isfilter;
-          power = MeResource.info.power;
-          isfilter = power !== '*';
-          isfilter && (route = power.split(','));
+          var rl, route, isfilter;
+          rl = MeResource.info.role.router;
+          isfilter = rl !== '*';
+          isfilter && (route = rl.split(','));
           return $state.get()
             .filter(function(s) {
               if (isfilter) {

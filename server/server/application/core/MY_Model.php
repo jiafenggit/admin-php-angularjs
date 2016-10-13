@@ -18,7 +18,14 @@ class MY_Model extends CI_Model {
  
   public function query($query = array(),$fields = NULL)
   {
-    $fields = isset($fields) ? $this->field_intersect($fields,$this->_query_field) : $this->_query_field;
+    if(isset($fields) && trim($fields) !== '*')
+    {
+      $fields = $this->field_intersect($fields,$this->_query_field);
+    }
+    else
+    {
+      $fields =  $this->_query_field;
+    }
     $fields = isset($query['fields']) ? $this->field_intersect($query['fields'],$fields) : $fields;
     $sort = isset($query['sort']) ? $this->sort_string($query['sort']) : $this->_tbl_key . ' DESC';
     $sql = $this->db
@@ -54,7 +61,14 @@ class MY_Model extends CI_Model {
  
   function get($key,$fields = NULL)
   {
-    $fields = isset($fields) ? $this->field_intersect($fields,$this->_get_field) : $this->_get_field;
+    if(isset($fields) && trim($fields) !== '*')
+    {
+      $fields = $this->field_intersect($fields,$this->_get_field);
+    }
+    else
+    {
+      $fields =  $this->_get_field;
+    }
     $result = $this->db->from($this->_tbl)
       ->select($fields)
       ->where($this->_tbl_key, $key)
@@ -82,7 +96,7 @@ class MY_Model extends CI_Model {
   {
     $key = $resource['id'];
     unset($resource['id']);
-    if(isset($fields))
+    if(isset($fields)  && trim($fields) !== '*')
     {
       $field = array_flip( explode(',',$fields) );
       $resource = array_intersect_key($resource,$field);
