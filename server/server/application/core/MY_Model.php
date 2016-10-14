@@ -56,26 +56,30 @@ class MY_Model extends CI_Model {
       ->result_array();
   }
  
-  function get($query,$fields = NULL)
+  function get($query)
   {
-    if(isset($fields) && trim($fields) !== '*')
-    {
-      $fields = $this->field_intersect($fields,$this->_get_field);
-    }
-    else
-    {
-      $fields =  $this->_get_field;
-    }
     $this->db->from($this->_tbl);
-    $this->db->select($fields);
+    $fields = $this->_get_field;
     if(is_array($query))
     {
-      foreach ($query as $k => $v) {
-        $this->db->where($k, $v);
+      if(isset($query['where']))
+      { 
+        if(is_array($query['where']))
+        {
+          foreach ($query as $k => $v) {
+            $this->db->where($k, $v);
+          }
+        }
+        $this->db->where($query['where']);
+      }
+      if(isset($query['fields']))
+      {
+        $fields = $this->field_intersect($query['fields'],$fields);
       }
     } else {
-      $this->db->where($this->_tbl_key, $query);
+      $this->db->where($this->_tbl_key,$query);
     }
+    $this->db->select($fields);
     return $this->db->get()->row();
   }
 
@@ -87,13 +91,13 @@ class MY_Model extends CI_Model {
       $resource = $valid['resource'];
       $resource['ctime'] = $resource['utime'] = time();
       $resource['status'] = 1;
-      $this->db->insert($this->_tbl, $resource);
+      $this->db->insert($this->_tbl,$resource);
       return array('status' => true);
     }
     return $valid;
   }
 
-  function update($resource,$fields = NULL)
+  function update($resource,$config)
   {
     $key = $resource['id'];
     unset($resource['id']);
