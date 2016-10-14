@@ -1,6 +1,6 @@
 <?php  if(!defined('BASEPATH')) exit('No direct script access allowed');
 
-class Admin_role_model extends MY_Model {  
+class Admin_roles_model extends MY_Model {  
 
   protected $_rules = array(
     'label' => array(
@@ -28,15 +28,11 @@ class Admin_role_model extends MY_Model {
       'errors' => array('required' => '{field}未设置', 'numeric' => '{field}格式不正确')
     )
   );
-  protected $_tbl = 'admin_role';
+  protected $_tbl = 'admin_roles';
   protected $_tbl_key = 'id';  
   protected $_query_field = 'id,label,utime,ctime';
   protected $_get_field = 'id,label,router,resource,utime,ctime';
   protected $_create_field = 'label,router,resource';
-  protected $_update_field = 'label,router,resource,status';
+  protected $_update_field = 'label,router,resource';
 
-  public function __construct()
-  {  
-    parent::__construct();    
-  }
 }

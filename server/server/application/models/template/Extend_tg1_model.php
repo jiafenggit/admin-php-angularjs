@@ -35,16 +35,7 @@ class Extend_tg1_model extends MY_Model {
   protected $_create_field = 'name,phone,email,qq';
   protected $_update_field = '';
 
-  public function __construct($config = NULL)
-  {  
-    parent::__construct();
-    if(isset($config))
-    {
-      $this->set_tbl($config['tbl']);
-    }    
-  }
-
-  public function create_resource($resource)
+  public function TableCreate($resource)
   { 
     $data = array(
         'controller' => 'extend',

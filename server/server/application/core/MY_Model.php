@@ -11,22 +11,19 @@ class MY_Model extends CI_Model {
   protected $_create_field = NULL;
   protected $_update_field = NULL;
 
-	function __construct()
-	{
-	  parent::__construct();
-	}
+	public function __construct($config = NULL)
+  {  
+    parent::__construct();
+    if(isset($config))
+    {
+      $this->set_tbl($config['tbl']);
+    }    
+  }
  
-  public function query($query = array(),$fields = NULL)
+  public function query($query = array())
   {
-    if(isset($fields) && trim($fields) !== '*')
-    {
-      $fields = $this->field_intersect($fields,$this->_query_field);
-    }
-    else
-    {
-      $fields =  $this->_query_field;
-    }
-    $fields = isset($query['fields']) ? $this->field_intersect($query['fields'],$fields) : $fields;
+
+    $fields = isset($query['fields']) ? $this->field_intersect($query['fields'],$this->_query_field) : $fields;
     $sort = isset($query['sort']) ? $this->sort_string($query['sort']) : $this->_tbl_key . ' DESC';
     $sql = $this->db
       ->from($this->_tbl)
@@ -59,7 +56,7 @@ class MY_Model extends CI_Model {
       ->result_array();
   }
  
-  function get($key,$fields = NULL)
+  function get($query,$fields = NULL)
   {
     if(isset($fields) && trim($fields) !== '*')
     {
@@ -69,13 +66,17 @@ class MY_Model extends CI_Model {
     {
       $fields =  $this->_get_field;
     }
-    $result = $this->db->from($this->_tbl)
-      ->select($fields)
-      ->where($this->_tbl_key, $key)
-      ->get()
-      ->result_array();
-    $resource = count($result) === 0 ? NULL : $result[0];
-    return $resource;
+    $this->db->from($this->_tbl);
+    $this->db->select($fields);
+    if(is_array($query))
+    {
+      foreach ($query as $k => $v) {
+        $this->db->where($k, $v);
+      }
+    } else {
+      $this->db->where($this->_tbl_key, $query);
+    }
+    return $this->db->get()->row();
   }
 
   function create($resource)

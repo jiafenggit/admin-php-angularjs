@@ -1,6 +1,6 @@
 <?php  if(!defined('BASEPATH')) exit('No direct script access allowed');
 
-class Admin_user_model extends MY_Model {  
+class Admin_users_model extends MY_Model {  
 
   protected $_rules = array(
     'username' => array(
@@ -28,17 +28,13 @@ class Admin_user_model extends MY_Model {
       'errors' => array('required' => '{field}未设置', 'numeric' => '请输入正确的{field}')
     )
   );
-  protected $_tbl = 'admin_info';
+  protected $_tbl = 'admin_users';
   protected $_tbl_key = 'uid';  
   protected $_query_field = 'uid,username,name,role';
   protected $_get_field = 'uid,username,name,role,ip,utime,ctime';
-  protected $_create_field = 'username,name,role';
-  protected $_update_field = 'username,name,role';
+  protected $_create_field = 'username,name,password,role';
+  protected $_update_field = 'username,name,password,role';
 
-  public function __construct()
-  {  
-    parent::__construct();    
-  }
 
   function create($resource)
   { 
