@@ -26,81 +26,55 @@ class Resourcies_model extends MY_Model {
   {  
     parent::__construct();    
   }
+  
+  function create($data)
+  { 
+    $field = $this->_create_field;
+    $valid = $this->validation($data, $field,$strict = true);
+    if($valid['status'] === true)
+    {
+      $resource = $valid['data'];
+      $this->load->model($resource['template'],'template');
+      if(!$tbl = $this->template->TableCreate($resource['controller'],$resource['resource']))
+      {
+        return array('status' => false,'error' => array('表已存在'));
+      }
+      $resource['tbl']  = $tbl;
+      $resource['ctime'] = $resource['utime'] = time();
+      $resource['status'] = 1;
+      $this->db->insert($this->_tbl,$resource);
+      return array('status' => true);
+    }
+    return $valid;
+  }
 
-  // function create($resource)
-  // { 
-  //   $valid = $this->validation($resource,'create');
-  //   if($valid['status'] === true)
-  //   { 
-  //     $this->load->model('admin/resource_templates_model','templates');
-  //     $this->templates->get($)
-  //       if(!$data = $this->rs->create_resource($resource['resource']))
-  //       {
-  //         return array(
-  //           'status'=>false,
-  //           'errors'=> array('创建失败')
-  //         );
-  //       }
-  //       $resource['controller'] = $data['controller'];
-  //       $resource['resource'] = $data['resource'];
-  //       $resource['tbl'] = $data['tbl'];
-  //     }
-  //     else
-  //     {
-  //       return array(
-  //         'status'=>false,
-  //         'errors'=> array('控制器不存在')
-  //       );
-       
-  //     }
-  //     $resource['ctime'] = $resource['utime'] = time();
-  //     $resource['status'] = 1;
-  //     $this->db->insert($this->_tbl, $resource);
-  //     return array('status' => true);
-  //   }
-  //   return $valid;
-  // }
+  public function GetResource($controller,$resource)
+  {
+    $config =  $this->_GetResourceConfig(array('controller' => $controller,'resource' => $resource));
+    if($config)
+    {
+      $this->load->model($config['template'],template);
+      return $this->template->GetResource($config['tbl']);
+    }
+    return false;
+  }
 
-  // public function getResource($req)
-  // { 
-  //   $valid = $this->validation($resource,'create');
-  //   if($valid['status'] === true)
-  //   { 
-  //     $resource = $valid['resource'];
-  //     if(isset($this->_controller[$resource['controller']]))
-  //     { 
-  //       $result = $this->db
-  //         ->select('tbl')
-  //         ->where('controller',$resource['controller'])
-  //         ->where('resource', $resource['resource'])
-  //         ->get($this->_tbl)
-  //         ->row();
-  //       if(!$result)
-  //       {
-  //         return array(
-  //           'status'=>false,
-  //           'errors'=> array('资源不存在')
-  //         );
-  //       }
-  //       $this->load->model($this->_controller[$resource['controller']],'rs');
-  //       if(!$data = $this->rs->get_resource($result->tbl))
-  //       {
-  //         return array(
-  //           'status'=>false,
-  //           'errors'=> array('创建失败')
-  //         );
-  //       }
-  //       return $data;      
-  //     }
-  //     else
-  //     {
-  //       return array(
-  //         'status'=>false,
-  //         'errors'=> array('控制器不存在')
-  //       );
-       
-  //     }
-  //   }
-  //   return $valid;
-  // }
+  public function _GetResourceConfig($where)
+  { 
+    $this->db->from($this->_tbl);
+    $this->db->select('id,controller,resource,tbl,template');
+    if(is_array($where))
+    {
+      foreach ($where as $k => $v) {
+        $this->db->where($k,$v);
+      }
+    }
+    $this->db->where($where);
+    $this->db->where('status','1');
+    if($res = $this->db->get()->row())
+    {
+      return $res;
+    };
+    return false;
+  }
 }

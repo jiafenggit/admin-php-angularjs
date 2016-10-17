@@ -35,14 +35,10 @@ class Extend_tg1_model extends MY_Model {
   protected $_create_field = 'name,phone,email,qq';
   protected $_update_field = '';
 
-  public function TableCreate($resource)
+  public function TableCreate($controller,$resource)
   { 
-    $data = array(
-        'controller' => 'extend',
-        'resource' => $resource,
-        'tbl' => 'extend_'.$resource
-    );
-    if($this->db->table_exists($data['tbl']))
+    $tbl ='extend_'.$controller.'_'$resource;
+    if($this->db->table_exists($tbl))
     {
       return false;
     }
@@ -89,14 +85,13 @@ class Extend_tg1_model extends MY_Model {
     );
     $this->dbforge->add_field($fields);
     $this->dbforge->add_key('id', TRUE);
-    $this->dbforge->create_table($data['tbl'], TRUE);
-    return $data;
+    $this->dbforge->create_table($tbl, TRUE);
+    return $tbl;
   }
 
-  public function get_resource($tbl)
+  public function GetResource($tbl)
   { 
-    $config = array('tbl'=>$tbl);
-    return new $this($config);
+    return new $this(array('tbl'=>$tbl));
   }
 
 }
