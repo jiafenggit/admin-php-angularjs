@@ -88,7 +88,8 @@ class Auth_model extends CI_Model {
     // if(!$role = $this->cache->get('resourcies_admin_roles_'.$key))
     // {
       $this->load->model('admin/Admin_roles_model','roles');
-      $role = $this->roles->get($key,'id,label,router,resource');
+       $this->roles->Setter('get_field','id,label,router,resource');
+      $role = $this->roles->get($key);
       // $this->cache->save('resourcies_admin_roles_'.$key,$role,86400);
       return $role;
     // }
@@ -100,7 +101,8 @@ class Auth_model extends CI_Model {
     // if(!$user = $this->cache->get('resourcies_admin_users_'.$key))
     // {
       $this->load->model('admin/Admin_users_model','users');
-      $user = $this->users->get($key,'uid,username,name,role'); 
+      $this->users->Setter('get_field','uid,username,name,role');
+      $user = $this->users->get($key); 
       // $this->cache->save('resourcies_admin_users_'.$key,$user,86400);
       return $user;
     // }

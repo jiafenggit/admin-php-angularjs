@@ -6,9 +6,9 @@ class Auth extends CI_Controller {
 	public function signin()
 	{   
 		$this->load->database();
-		$this->load->model('admin/Admin_user_model','user');
+		$this->load->model('admin/Admin_users_model','users');
 		$req = $this->input->post();
-		$res = $this->user->auth($req);
+		$res = $this->users->auth($req);
 		if($res['status'] === true)
 		{
            $this->load->model('admin/Key_model','token');
@@ -25,7 +25,8 @@ class Auth extends CI_Controller {
 	{
 		$this->load->database();
 		$this->load->model('admin/Auth_model','auth');
-		if($this->auth->run() === false)
+		$token = $this->input->get_request_header('authorization', TRUE);
+		if($this->auth->run($token) === false)
 	    {
 	      show_error('Unauthorized',401);
 	      return;

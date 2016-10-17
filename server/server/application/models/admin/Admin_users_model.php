@@ -60,7 +60,7 @@ class Admin_users_model extends MY_Model {
     $valid = $this->validation($res,'username,password');
     if($valid['status'] === true)
     {  
-      $resource = $valid['resource'];
+      $resource = $valid['data'];
       $results = $this->db->from($this->_tbl)
         ->select('uid,username,password,name,role')
         ->where('username',$resource['username'])

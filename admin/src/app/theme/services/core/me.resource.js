@@ -5,10 +5,15 @@
 	function MeResource($resource, $cookies, $q) {
 		return {
 			load: function() {
-				return this.info = $resource('/api/admin/auth/info').get();
+				this.info = $resource('/api/admin/auth/info').get();
+				return this.info.$promise;
 			},
 			isAuthenticated: function(router) {
-				if ("home,admin.users,admin.roles".split(',').indexOf(router) < 0) {
+				var r = this.info.role.router;
+				if (r === '*') {
+					return true;
+				}
+				if (r.split(',').indexOf(router) < 0) {
 					return false;
 				};
 				return true;

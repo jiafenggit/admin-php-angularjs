@@ -15,8 +15,7 @@ class Resource extends REST_Controller {
     $this->load->database();
     
     $this->load->model('admin/Auth_model','auth');
-    //$token = $this->input->get_request_header('authorization', TRUE);
-    $token = 'zyy';
+    $token = $this->input->get_request_header('authorization', TRUE);
     if($this->auth->run($token) === false)
     {
       $this->response('',401);
