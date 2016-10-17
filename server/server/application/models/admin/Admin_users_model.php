@@ -35,36 +35,29 @@ class Admin_users_model extends MY_Model {
   protected $_create_field = 'username,name,password,role';
   protected $_update_field = 'username,name,password,role';
 
-
-  function create($resource)
+  function create($data)
   { 
-    $valid = $this->validation($resource,'create');
+    $field = $this->_create_field;
+    $valid = $this->validation($data, $field,$strict = true);
     if($valid['status'] === true)
     {
-      $resource = $valid['resource'];
-      $hasuser = $this->db
-        ->where('username',$resource['username'])
-        ->count_all_results($this->_tbl) > 0;
-      if($hasuser)
+      $resource = $valid['data'];
+      if($this->db->where('username',$resource['username'])->count_all_results($this->_tbl) > 0)
       {
-        $valid = array(
-          'status' => false,
-          'error' => array('用户名已存在')
-        );
+        return array('status' => false,'error' => array('用户名已存在'));
       }
       $resource['ctime'] = $resource['utime'] = time();
-      $data['ip'] =ip2long($this->input->ip_address());
       $resource['status'] = 1;
-      $this->db->insert($this->_tbl, $resource);
+      $resource['ip'] = ip2long($this->input->ip_address());
+      $this->db->insert($this->_tbl,$resource);
       return array('status' => true);
     }
     return $valid;
   }
-
+ 
   public function auth($res)
   { 
-    $this->_create_field = 'username,password';
-    $valid = $this->validation($res,'create');
+    $valid = $this->validation($res,'username,password');
     if($valid['status'] === true)
     {  
       $resource = $valid['resource'];

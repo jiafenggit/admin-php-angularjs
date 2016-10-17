@@ -2,7 +2,8 @@
 
 class Auth_model extends CI_Model {  
   
-  protected $_user = NULL; 
+  protected $_user = NULL;
+  protected $_field = NULL; 
 
   public function __construct()
   {  
@@ -21,7 +22,51 @@ class Auth_model extends CI_Model {
     }
     return false;
   }
-  
+
+  public function is_pass()
+  {
+    $ctr = $this->router->class;
+    $res = $this->router->method;
+    $method = $this->input->method();
+    $role = $this->get_user('role');
+    $rules = $role['resource'];
+    if($rules === '*')
+    {
+      $this->Setter('filed','*');
+      return true;
+    }
+    $rules = json_decode($rules);
+
+    if(isset($rules->$ctr->$res) && !empty(trim($rules->$ctr->$res->fields)) )
+    {
+      if(in_array($method,$rules->$ctr->$res->method) && isset($rules->$ctr->$res->fields))
+      {
+        $this->Setter('filed',$rules->$ctr->$res->fields);
+        return  true;
+      }
+    } 
+    return false;
+  }
+
+  public function Setter($key,$value)
+  {
+    if(isset($this->{'_'.$key}))
+    {
+      $this->{'_'.$key} = $value;
+      return true;
+    }
+    return false;
+  }
+
+  public function Getter($key)
+  {
+    if(isset($this->{'_'.$key}))
+    {
+      return $this->{'_'.$key};
+    }
+    return NULL;
+  }
+
   public function get_user($key = NULL)
   {
     if ($key === NULL)
@@ -37,27 +82,6 @@ class Auth_model extends CI_Model {
     $user = $this->_get_user($key);
     $user['role'] = $this->_get_role($user['role']);
     $this->_user = $user; 
-  }
-
-  public function is_pass($ctr,$res,$method)
-  {
-    $role = $this->get_user('role');
-    $rules = $role['resource'];
-    if($rules === '*')
-    {
-      return  '*';
-    }
-    $rules = json_decode($rules);
-
-    if(isset($rules->$ctr->$res) && !empty(trim($rules->$ctr->$res->fields)) )
-    {
-      if(in_array($method,$rules->$ctr->$res->method))
-      {
-        return  $rules->$ctr->$res->fields;
-      }
-      return false;
-    } 
-    return false;
   }
   
   protected function _get_role($key)
