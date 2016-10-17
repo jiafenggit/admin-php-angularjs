@@ -17,7 +17,7 @@ class Auth_model extends CI_Model {
     {
       $result =  $this->token->get_key($token);
       $this->set_user($result->uid);
-      return true;
+      return $this->is_pass();
     }
     return false;
   }
