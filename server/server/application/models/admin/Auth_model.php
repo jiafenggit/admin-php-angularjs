@@ -2,7 +2,7 @@
 
 class Auth_model extends CI_Model {  
   
-  protected $_user = ''
+  protected $_user = '';
   protected $_field = ''; 
 
   public function __construct()
