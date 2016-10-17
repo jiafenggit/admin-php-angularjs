@@ -28,12 +28,12 @@ CREATE TABLE `admin_roles` (
   `utime` int(11) NOT NULL,
   `ctime` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of admin_roles
 -- ----------------------------
-INSERT INTO `admin_roles` VALUES ('0', '超级管理员', '*', '*', '1', '1475039129', '1475039129');
+INSERT INTO `admin_roles` VALUES ('1', '超级管理员', '*', '*', '1', '1475039129', '1475039129');
 
 -- ----------------------------
 -- Table structure for admin_users
@@ -50,12 +50,12 @@ CREATE TABLE `admin_users` (
   `ctime` int(11) NOT NULL,
   `ip` int(11) NOT NULL,
   PRIMARY KEY (`uid`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of admin_users
 -- ----------------------------
-INSERT INTO `admin_users` VALUES ('0', 'admin', 'admin', 'e10adc3949ba59abbe56e057f20f883e', '0', '1', '1475044139', '1473404039', '0');
+INSERT INTO `admin_users` VALUES ('1', 'admin', 'admin', 'e10adc3949ba59abbe56e057f20f883e', '1', '1', '1475044139', '1473404039', '0');
 
 -- ----------------------------
 -- Table structure for resourcies

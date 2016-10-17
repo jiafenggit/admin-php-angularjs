@@ -2,8 +2,8 @@
 
 class Auth_model extends CI_Model {  
   
-  protected $_user = NULL;
-  protected $_field = NULL; 
+  protected $_user = ''
+  protected $_field = ''; 
 
   public function __construct()
   {  
@@ -28,10 +28,10 @@ class Auth_model extends CI_Model {
     $res = $this->router->method;
     $method = $this->input->method();
     $role = $this->get_user('role');
-    $rules = $role['resource'];
+    $rules = $role->resource;
     if($rules === '*')
     {
-      $this->Setter('filed','*');
+      $this->Setter('field','*');
       return true;
     }
     $rules = json_decode($rules);
@@ -40,7 +40,7 @@ class Auth_model extends CI_Model {
     {
       if(in_array($method,$rules->$ctr->$res->method) && isset($rules->$ctr->$res->fields))
       {
-        $this->Setter('filed',$rules->$ctr->$res->fields);
+        $this->Setter('field',$rules->$ctr->$res->fields);
         return  true;
       }
     } 
@@ -72,7 +72,7 @@ class Auth_model extends CI_Model {
     {
       return $this->_user;
     }
-    return isset($this->_user[$key]) ? $this->_user[$key] : NULL;
+    return isset($this->_user->$key) ? $this->_user->$key : NULL;
   }
 
   public function set_user($key)
