@@ -11,9 +11,8 @@ class Auth_model extends CI_Model {
     $this->load->model('admin/Key_model','token');    
   } 
   
-  public function run()
+  public function run($token)
   {
-    $token = $this->input->get_request_header('authorization', TRUE);
     if($token && $this->token->key_exists($token))
     {
       $result =  $this->token->get_key($token);
@@ -80,7 +79,7 @@ class Auth_model extends CI_Model {
   {
     $this->load->driver('cache', array('adapter' => 'apc', 'backup' => 'file'));
     $user = $this->_get_user($key);
-    $user['role'] = $this->_get_role($user['role']);
+    $user->role = $this->_get_role($user->role);
     $this->_user = $user; 
   }
   
@@ -88,9 +87,9 @@ class Auth_model extends CI_Model {
   {
     // if(!$role = $this->cache->get('resourcies_admin_roles_'.$key))
     // {
-      $this->load->model('admin/Admin_role_model','roles');
+      $this->load->model('admin/Admin_roles_model','roles');
       $role = $this->roles->get($key,'id,label,router,resource');
-      $this->cache->save('resourcies_admin_roles_'.$key,$role,86400);
+      // $this->cache->save('resourcies_admin_roles_'.$key,$role,86400);
       return $role;
     // }
     // return $role;
@@ -100,7 +99,7 @@ class Auth_model extends CI_Model {
   { 
     // if(!$user = $this->cache->get('resourcies_admin_users_'.$key))
     // {
-      $this->load->model('admin/Admin_user_model','users');
+      $this->load->model('admin/Admin_users_model','users');
       $user = $this->users->get($key,'uid,username,name,role'); 
       // $this->cache->save('resourcies_admin_users_'.$key,$user,86400);
       return $user;

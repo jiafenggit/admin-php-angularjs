@@ -15,16 +15,23 @@ class Admin extends REST_Controller {
     $this->load->database();
     
     $this->load->model('admin/Auth_model','auth');
-    if($this->auth->run() === false)
+    $token = $this->input->get_request_header('authorization', TRUE);
+    if($this->auth->run($token) === false)
     {
       $this->response('',401);
     }
-    
-    $this->load->model($this->_resourice[$this->router->method],'resourcies');
   }
 
   public function _remap($resource, $params = array())  
   { 
+    if(!isset($this->_resourice[$resource]))
+    {
+      $this->response([
+          $this->config->item('rest_status_field_name') => FALSE,
+          $this->config->item('rest_message_field_name') => $this->lang->line('text_rest_unknown_method')
+      ], 405);
+    }
+    $this->load->model($this->_resourice[$resource],'resourcies');
     $this->{'rest_'.$this->input->method()}();
   }
 
