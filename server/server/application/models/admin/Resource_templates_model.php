@@ -16,7 +16,7 @@ class Resource_templates_model extends MY_Model {
       'errors' => array('required' => '{field}未设置')
     )
   );
-  protected $_tbl = 'resource_templates';
+  protected $_tbl = 'resourcies_template';
   protected $_tbl_key = 'id';  
   protected $_query_field = 'id,lable,template,utime,ctime';
   protected $_get_field = 'id,lable,template,utime,ctime';
