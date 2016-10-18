@@ -26,7 +26,7 @@ class Auth extends CI_Controller {
 		$this->load->database();
 		$this->load->model('admin/Auth_model','auth');
 		$token = $this->input->get_request_header('authorization', TRUE);
-		if($this->auth->run($token) === false)
+		if($this->auth->run($token,false) === false)
 	    {
 	      show_error('Unauthorized',401);
 	      return;

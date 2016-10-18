@@ -6,13 +6,12 @@
 
       'Admin.pages.home',
       'Admin.pages.admin',
-    ])
-    .config(routeConfig);
+    ]);
+  //   .config(routeConfig);
 
-  /** @ngInject */
-  function routeConfig($urlRouterProvider, baSidebarServiceProvider) {
-    $urlRouterProvider.otherwise('/home');
+  // function routeConfig($urlRouterProvider, baSidebarServiceProvider) {
+  //   $urlRouterProvider.otherwise('/home');
 
-  }
+  // }
 
 })();

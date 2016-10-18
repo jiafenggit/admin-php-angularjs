@@ -11,13 +11,17 @@ class Auth_model extends CI_Model {
     $this->load->model('admin/Key_model','token');    
   } 
   
-  public function run($token)
+  public function run($token,$rsCtr = true)
   {
     if($token && $this->token->key_exists($token))
     {
       $result =  $this->token->get_key($token);
       $this->set_user($result->uid);
-      return $this->is_pass();
+      if($rsCtr)
+      {
+        return $this->is_pass();
+      }
+      return true;
     }
     return false;
   }

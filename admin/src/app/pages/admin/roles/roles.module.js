@@ -12,6 +12,16 @@
         templateUrl: 'app/pages/admin/roles/roles.html',
         title: '权限组',
         controller: 'AdminRolesCtrl',
+        resolve: {
+          MY: function(MeResource, MyResource) {
+            var m = {};
+            m.$roles = {
+              resource: MyResource.create('admin', 'roles'),
+              config: MeResource.resCtr('admin', 'roles', 'id,label,router,resource,utime,ctime')
+            };
+            return m;
+          }
+        },
         sidebarMeta: {
           order: 1,
         },
