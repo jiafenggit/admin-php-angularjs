@@ -13,7 +13,6 @@
     var whatToWait = [MeResource.load(), MyResource.load()];
 
     $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams, options) {
-        console.log(MeResource.info.$promise.$$state.status);
       if (MeResource.info.$promise.$$state.status === 0) {
         event.preventDefault();
         MeResource.info.$promise.then(function() {
@@ -21,7 +20,6 @@
         })
         return;
       }
-      console.log(toState.name);
       MeResource.isAuthenticated(toState.name) || event.preventDefault();
     });
     $q.all(whatToWait).then(function() {

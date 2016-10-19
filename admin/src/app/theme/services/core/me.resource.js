@@ -2,20 +2,48 @@
 
 (function() {
 
-	function MeResource($resource, $cookies, $q) {
+	function MeResource($resource, $cookies, $q, $state) {
+		var defaultRouter, _routerArr;
+		_routerArr = $state.get();
+		defaultRouter = {};
+		angular.forEach(_routerArr, function(value) {
+			var statusArr, o;
+			if (!value.name) return
+			statusArr = value.name.split('.');
+			o = defaultRouter;
+			angular.forEach(statusArr, function(v) {
+				if (typeof(o[v]) === "undefined") {
+					o[v] = {};
+				}
+				o = o[v];
+			})
+		})
 		return {
+			defaults: {
+				router: defaultRouter
+			},
 			load: function() {
 				this.info = $resource('/api/admin/auth/info').get();
 				return this.info.$promise;
 			},
-			isAuthenticated: function(router) {
-				var r = this.info.role.router;
+			isAuthenticated: function(routerStatus) {
+				var r, o, obj, statusArr;
+				r = this.info.role.router;
 				if (r === '*') {
 					return true;
-				}
-				if (r.split(',').indexOf(router) < 0) {
+				} else if (!r) {
 					return false;
-				};
+				} else {
+					obj = angular.fromJson(r);
+					statusArr = routerStatus.split('.');
+					o = obj;
+					for (var i = 0, l = statusArr.length; i < l; i++) {
+						if (typeof(o[statusArr[i]]) === "undefined") {
+							return false;
+						}
+						o = o[statusArr[i]];
+					}
+				}
 				return true;
 			},
 			resCtr: function(ctr, res, fieldStr) {
