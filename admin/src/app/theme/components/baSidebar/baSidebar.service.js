@@ -62,16 +62,20 @@
           }
         };
 
+        function formatStatus(router) {
+          console.log(router);
+        };
+
         function defineMenuItemStates() {
-          var rl, route, isfilter;
-          rl = MeResource.info.role.router;
-          isfilter = rl !== '*';
-          isfilter && (route = rl.split(','));
-          return $state.get()
+          var r, status, a;
+          r = MeResource.info.role.router;
+          status = $state.get();
+          r = '[{"name":"home","parent":"root","level":"0"}]';
+          r = angular.fromJson(r);
+          r = formatStatus(r);
+          console.log(r);
+          return status
             .filter(function(s) {
-              if (isfilter) {
-                return s.sidebarMeta && route.indexOf(s.name) > -1;
-              }
               return s.sidebarMeta;
             })
             .map(function(s) {

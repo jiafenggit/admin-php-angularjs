@@ -78,45 +78,21 @@
           select: select
         };
       },
-      power: function(states, power) {
-        if (power === '*') {
-          var res = states.filter(function(s) {
-            return s.sidebarMeta;
-          }).map(function(s) {
-            return {
-              title: s.name,
-              value: false,
-              disabled: true,
-            };
-          });
-          res.push({
-            title: '*',
-            value: true,
-            disabled: true
-          });
-          return res;
-        } else if (power === undefined) {
-          return states.filter(function(s) {
-            return s.sidebarMeta;
-          }).map(function(s) {
-            return {
-              title: s.name,
-              value: false,
-              disabled: false,
-            };
-          });
-        } else {
-          var arr = power.split(',');
-          return states.filter(function(s) {
-            return s.sidebarMeta;
-          }).map(function(s) {
-            return {
-              title: s.name,
-              value: arr.indexOf(s.name) > -1 ? true : false,
-              disabled: false,
-            };
-          });
-        }
+      formatRouter: function(state) {
+        var d = [];
+        angular.forEach(state, function(value) {
+          var arr, l;
+          if (!value.name) return
+          arr = value.name.split('.');
+          l = arr.length - 1;
+          d.push({
+            name: arr[l],
+            parent: l === 0 ? 'root' : arr[l - 1],
+            title: value.title,
+            level: l
+          })
+        })
+        return d;
       }
     };
 

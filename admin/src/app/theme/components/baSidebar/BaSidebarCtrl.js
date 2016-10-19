@@ -11,9 +11,6 @@
   /** @ngInject */
   function BaSidebarCtrl($scope, baSidebarService, MeResource) {
     var menu = baSidebarService.getMenuItems();
-    // if (MeResource.info.role != 0) {
-    //   menu.splice(1, 1);
-    // };
     $scope.menuItems = menu;
     $scope.defaultSidebarState = $scope.menuItems[0].stateRef;
 

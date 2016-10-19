@@ -2,49 +2,31 @@
 
 (function() {
 
-	function MeResource($resource, $cookies, $q, $state) {
-		var defaultRouter, _routerArr;
-		_routerArr = $state.get();
-		defaultRouter = {};
-		angular.forEach(_routerArr, function(value) {
-			var statusArr, o;
-			if (!value.name) return
-			statusArr = value.name.split('.');
-			o = defaultRouter;
-			angular.forEach(statusArr, function(v) {
-				if (typeof(o[v]) === "undefined") {
-					o[v] = {};
-				}
-				o = o[v];
-			})
-		})
+	function MeResource($resource, $cookies, $state, $filter, Util) {
 		return {
 			defaults: {
-				router: defaultRouter
+				router: Util.formatRouter($state.get())
 			},
 			load: function() {
 				this.info = $resource('/api/admin/auth/info').get();
 				return this.info.$promise;
 			},
 			isAuthenticated: function(routerStatus) {
-				var r, o, obj, statusArr;
+				var r, arr, l, selected, router;
 				r = this.info.role.router;
+				r = '[{"name":"home","parent":"root","level":"0"}]';
 				if (r === '*') {
 					return true;
-				} else if (!r) {
-					return false;
-				} else {
-					obj = angular.fromJson(r);
-					statusArr = routerStatus.split('.');
-					o = obj;
-					for (var i = 0, l = statusArr.length; i < l; i++) {
-						if (typeof(o[statusArr[i]]) === "undefined") {
-							return false;
-						}
-						o = o[statusArr[i]];
-					}
 				}
-				return true;
+				router = angular.fromJson(r);
+				arr = routerStatus.split('.');
+				l = arr.length - 1;
+				selected = $filter('filter')(router, {
+					level: l,
+					name: arr[l],
+					parent: l === 0 ? 'root' : arr[l - 1]
+				});
+				return selected.length > 0 ? true : false;
 			},
 			resCtr: function(ctr, res, fieldStr) {
 				var result, fieldArr, ruleField, rs, rules, method, fieldObj = {};
