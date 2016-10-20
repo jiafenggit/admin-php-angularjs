@@ -18,7 +18,7 @@
         },
         controller: 'AdminUsersCtrl',
         sidebarMeta: {
-          order: 1,
+          order: 2,
         },
       });
   }

@@ -19,7 +19,7 @@ class MY_Model extends CI_Model {
       $this->Setter('tbl',$config['tbl']);
     }    
   }
- 
+  
   public function query($query = array())
   {
 
@@ -150,12 +150,12 @@ class MY_Model extends CI_Model {
     $sort_arr = explode(',',$input);
     $sort = '';
     foreach ($sort_arr as $k => $v) {
-      if(strpos($k,'-') === 0)
+      if(strpos($v,'-') === 0)
       {
-        $sort .= substr($k,1) . ' DESC';
+        $sort .= substr($v,1) . ' DESC';
         continue;
       }
-      $sort .= $k . ' ASC';
+      $sort .= $v . ' ASC';
     }
     return $sort;
   }

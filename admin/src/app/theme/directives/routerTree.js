@@ -4,11 +4,10 @@
   angular.module('Admin.theme')
     .directive('routerTree', routerTree);
 
-  function routerTree() {
+  function routerTree($filter, Util, MeResource) {
     return {
       restrict: 'E',
       scope: {
-        'ngModel': '=',
         'option': '='
       },
       link: function link(scope, el, attr) {
@@ -18,22 +17,10 @@
           width: 800,
           margin: [85, 40, 85, 40],
           height: 300,
-          duration: 1000, //展开时间
+          duration: 1000,
         };
-        formatRoot(scope.ngModel);
-        root = {
-          "name": "后台管理系统",
-          "children": [{
-            "name": "管理员中心",
-            "children": [{
-              "name": "管理员列表"
-            }, {
-              "name": "权限组"
-            }]
-          }, {
-            "name": "首页"
-          }]
-        };
+        conf = angular.extend(scope.option, conf);
+        root = formatRoot(conf.data);
         root.x0 = 0;
         root.y0 = 0;
         init(root, conf);
@@ -66,16 +53,28 @@
         }
 
         function disabled(d, status) {
-          d.d = status;
-          if (d.children && angular.isObject(d.children)) {
-            angular.forEach(d.children, function(v) {
-              disabled(v, status);
-            })
+          d.disabled = status;
+          if (d.disabled) {
+            if (d.children) {
+              angular.forEach(d.children, function(v) {
+                disabled(v, status);
+              })
+            }
+            if (d._children) {
+              angular.forEach(d._children, function(v) {
+                disabled(v, status);
+              })
+            }
+          } else {
+            if (d.parent && typeof(d.level) === "number") {
+              disabled(d.parent, status);
+            }
           }
+
         }
 
         function click(d) {
-          if (scope.option) {
+          if (conf.str) {
             if (d.children) {
               d._children = d.children;
               d.children = null;
@@ -84,7 +83,11 @@
               d._children = null;
             }
           } else {
-            disabled(d, !d.d);
+            if (typeof(d.level) === 'undefined') return
+            disabled(d, !d.disabled);
+            scope.$apply(function() {
+              scope.option.data = formatData(root);
+            });
           }
           update(d);
         }
@@ -115,9 +118,9 @@
             .attr("r", 1e-6)
             .attr("class", function(d) {
               if (d._children) {
-                return "clp" + (d.d ? ' disabled' : '');
+                return "clp" + (d.disabled ? ' disabled' : '');
               } else {
-                return d.d ? 'disabled' : '';
+                return d.disabled ? 'disabled' : '';
               }
             })
 
@@ -130,7 +133,7 @@
               return d.children || d._children ? "end" : "start";
             })
             .text(function(d) {
-              return d.name;
+              return d.title;
             })
             .style("fill-opacity", 1e-6);
 
@@ -145,9 +148,9 @@
             .attr("r", 4.5)
             .attr("class", function(d) {
               if (d._children) {
-                return "clp" + (d.d ? ' disabled' : '');
+                return "clp" + (d.disabled ? ' disabled' : '');
               } else {
-                return d.d ? 'disabled' : '';
+                return d.disabled ? 'disabled' : '';
               }
             })
 
@@ -176,7 +179,7 @@
           // Enter any new links at the parent's previous position.
           link.enter().insert("path", "g")
             .attr("class", function(d) {
-              if (d.target.d) {
+              if (d.target.disabled) {
                 return "link disabled";
               }
               return "link";
@@ -197,7 +200,7 @@
             .duration(conf.duration)
             .attr("d", diagonal)
             .attr("class", function(d) {
-              if (d.target.d) {
+              if (d.target.disabled) {
                 return "link disabled";
               }
               return "link";
@@ -226,11 +229,77 @@
         }
 
         function formatRoot(data) {
-          console.log(data);
+          var d, def, res, selected;
+          d = angular.copy(MeResource.defaults.router);
+          console
+          if (data === '*') {
+            def = d.map(function(s) {
+              s.disabled = false;
+            });
+          } else {
+            def = Util.formatRouterObj(angular.fromJson(data));
+            d.map(function(s) {
+              selected = $filter('filter')(def, {
+                name: s.name,
+                parent: s.parent,
+                level: s.level
+              });
+              s.disabled = !(selected.length > 0);
+            });
+          };
+          res = {
+            "title": "后台管理系统",
+            "name": "root"
+          };
+          selected = $filter('filter')(d, {
+            parent: "root",
+            level: 0
+          });
+          if (selected.length > 0) {
+            res.children = _formatItem(selected, 0, d);
+          };
+          return res;
+          console.log(res);
         }
 
-        function formatData() {
+        function _formatItem(items, level, d) {
+          var selected, item, res = [];
+          angular.forEach(items, function(v) {
+            item = {
+              disabled: v.disabled,
+              name: v.name,
+              title: v.title,
+              level: v.level
+            };
+            selected = $filter('filter')(d, {
+              parent: v.name,
+              level: level + 1
+            });
+            if (selected.length > 0) {
+              item.children = _formatItem(selected, level + 1, d);
+            }
+            res.push(item)
+          })
+          return res;
+        }
 
+        function formatData(r) {
+          return angular.toJson(_decodeItem(r.children));
+        }
+
+        function _decodeItem(items) {
+          var res = {};
+          angular.forEach(items, function(v) {
+            if (v.disabled === false) {
+              if (typeof(v.children) === "undefined") {
+                res[v.name] = {}
+              } else {
+                res[v.name] = _decodeItem(v.children);
+              }
+            }
+            return;
+          })
+          return res;
         }
       }
     }

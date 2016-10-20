@@ -7,8 +7,8 @@
 						<tr>
 							<th class="col-md-1">ID</th>
 							<th class="col-md-2">标签</th>
-<!-- 							<th class="col-md-3">更新时间</th>
-							<th class="col-md-3">创建时间</th> -->
+							<th class="col-md-3" ng-if="::conf.$roles.field.utime">更新时间</th>
+							<th class="col-md-3" ng-if="::conf.$roles.field.ctime">创建时间</th>
 							<th class="col-md-3 text-center">操作</th>
 						</tr>
 					</thead>
@@ -16,11 +16,11 @@
 						<tr ng-repeat="item in collections">
 							<td>{{::item.id}}</td>
 							<td>{{::item.label}}</td>
-							<!-- <td>{{::item.utime*1000 | date:'y-MM-dd HH:mm:ss'}}</td>
-							<td>{{::item.ctime*1000 | date:'y-MM-dd HH:mm:ss'}}</td> -->
+							<td ng-if="::conf.$roles.field.utime">{{::item.utime*1000 | date:'y-MM-dd HH:mm:ss'}}</td>
+							<td ng-if="::conf.$roles.field.ctime">{{::item.ctime*1000 | date:'y-MM-dd HH:mm:ss'}}</td>
 							<td class="text-center">
-								<button class="btn btn-info btn-xs" ng-click="show(item)">详细</button>
-								<button class="btn btn-danger btn-xs" ng-click="remove(item)">删除</button>
+								<button class="btn btn-info btn-xs" ng-click="show(item)" ng-if="::conf.$roles.method.get">详细</button>
+								<button class="btn btn-danger btn-xs" ng-click="remove(item)" ng-if="::conf.$roles.method.delete">删除</button>
 							</td>
 						</tr>
 					</tbody>

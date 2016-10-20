@@ -31,8 +31,22 @@ class Admin extends REST_Controller {
           $this->config->item('rest_message_field_name') => $this->lang->line('text_rest_unknown_method')
       ], 405);
     }
+    if(isset($params[0]) && $params[0] == 'info')
+    {
+      if(method_exists($this,$resource.'_info'))
+      {
+        $this->{$resource.'_info'}();
+        return;
+      }
+    }
     $this->load->model($this->_resourice[$resource],'resourcies');
     $this->{'rest_'.$this->input->method()}();
+
+  }
+  public function roles_info()
+  { 
+    $this->load->model('admin/Resourcies_model','resourcies');
+    $this->response($this->resourcies->query(), 200);
   }
 
   public function rest_get()

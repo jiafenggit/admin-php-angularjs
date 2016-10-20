@@ -35,4 +35,32 @@ class Admin_roles_model extends MY_Model {
   protected $_create_field = 'label,router,resource';
   protected $_update_field = 'label,router,resource';
 
+  function update($data)
+  { 
+    if(isset($data['id']) && $data['id'] == 1 )
+    {
+      return array(
+          'status'=> false,
+          'errors'=> array('不可修改') 
+        );
+    }
+    $field = $this->_update_field;
+    $valid = $this->validation($data, $field,$strict = false);
+    if($valid['status'] === true)
+    {
+      $resource = $valid['data'];
+      $resource['utime'] = time();
+      $this->db
+        ->where($this->_tbl_key,$data['id'])
+        ->update($this->_tbl, $resource);
+      if( $this->db->affected_rows() < 1)
+      {
+        $valid = array(
+          'status'=> false,
+          'errors'=> array('更新失败') 
+        );
+      }
+    }
+    return $valid;
+  }
 }

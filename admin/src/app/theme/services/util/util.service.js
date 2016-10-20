@@ -115,6 +115,16 @@
         })
 
         return d;
+      },
+      StrIntersect: function(str1, str2) {
+      },
+      ArrIntersect: function(arr1, arr2) {
+        angular.forEach(arr2, function(v) {
+          if (!arr1.contains(v)) {
+            arr1.push(v);
+          }
+        })
+        return arr1;
       }
     };
 

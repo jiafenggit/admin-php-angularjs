@@ -9,6 +9,13 @@
 				resource: resource,
 				id: key,
 			}, {
+				'info': {
+					method: 'GET',
+					params: {
+						id: 'info'
+					},
+					isArray: true
+				},
 				'save': {
 					method: 'POST',
 					transformResponse: [function(data, headersGetter, status) {
@@ -40,6 +47,11 @@
 					transformResponse: [function(data, headersGetter, status) {
 						if (status === 204) {
 							toastr.success('更新成功');
+						}
+						if (status === 400) {
+							angular.forEach(angular.fromJson(data), function(v) {
+								toastr.warning(v, '警告');
+							})
 						}
 					}]
 				}
