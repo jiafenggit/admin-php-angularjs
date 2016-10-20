@@ -8,10 +8,10 @@
     return {
       restrict: 'E',
       scope: {
-        'ngModel': '='
+        'ngModel': '=',
+        'option': '='
       },
       link: function link(scope, el, attr) {
-        console.log(scope);
         var conf, i, root, tree, diagonal, svg;
         i = 0;
         conf = {
@@ -20,6 +20,7 @@
           height: 300,
           duration: 1000, //展开时间
         };
+        formatRoot(scope.ngModel);
         root = {
           "name": "后台管理系统",
           "children": [{
@@ -64,15 +65,27 @@
           }
         }
 
-        function click(d) {
-          if (d.children) {
-            d._children = d.children;
-            d.children = null;
-          } else {
-            d.children = d._children;
-            d._children = null;
+        function disabled(d, status) {
+          d.d = status;
+          if (d.children && angular.isObject(d.children)) {
+            angular.forEach(d.children, function(v) {
+              disabled(v, status);
+            })
           }
-          d.d = true;
+        }
+
+        function click(d) {
+          if (scope.option) {
+            if (d.children) {
+              d._children = d.children;
+              d.children = null;
+            } else {
+              d.children = d._children;
+              d._children = null;
+            }
+          } else {
+            disabled(d, !d.d);
+          }
           update(d);
         }
 
@@ -100,9 +113,13 @@
 
           nodeEnter.append("circle")
             .attr("r", 1e-6)
-            .style("fill", function(d) {
-              return d._children ? "lightsteelblue" : "#fff";
-            });
+            .attr("class", function(d) {
+              if (d._children) {
+                return "clp" + (d.d ? ' disabled' : '');
+              } else {
+                return d.d ? 'disabled' : '';
+              }
+            })
 
           nodeEnter.append("text")
             .attr("x", function(d) {
@@ -126,11 +143,11 @@
 
           nodeUpdate.select("circle")
             .attr("r", 4.5)
-            .style("fill", function(d) {
+            .attr("class", function(d) {
               if (d._children) {
-                return "lightsteelblue";
+                return "clp" + (d.d ? ' disabled' : '');
               } else {
-                return "#fff";
+                return d.d ? 'disabled' : '';
               }
             })
 
@@ -206,6 +223,14 @@
             d.x0 = d.x;
             d.y0 = d.y;
           });
+        }
+
+        function formatRoot(data) {
+          console.log(data);
+        }
+
+        function formatData() {
+
         }
       }
     }

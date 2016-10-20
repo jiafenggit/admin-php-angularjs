@@ -8,23 +8,25 @@
 				router: Util.formatRouter($state.get())
 			},
 			load: function() {
-				this.info = $resource('/api/admin/auth/info').get();
+				var s = this;
+				s.info = $resource('/api/admin/auth/info').get(function(d) {
+					if (d.role.router === '*') {
+						d.role.router = s.defaults.router;
+					} else {
+						d.role.router = Util.formatRouterObj(angular.fromJson(d.role.router));
+					}
+				});
 				return this.info.$promise;
 			},
 			isAuthenticated: function(routerStatus) {
-				var r, arr, l, selected, router;
-				r = this.info.role.router;
-				r = '[{"name":"home","parent":"root","level":"0"}]';
-				if (r === '*') {
-					return true;
-				}
-				router = angular.fromJson(r);
+				var arr, i, selected, router;
+				router = this.info.role.router;
 				arr = routerStatus.split('.');
-				l = arr.length - 1;
+				i = arr.length - 1;
 				selected = $filter('filter')(router, {
-					level: l,
-					name: arr[l],
-					parent: l === 0 ? 'root' : arr[l - 1]
+					level: i,
+					name: arr[i],
+					parent: i === 0 ? 'root' : arr[i - 1]
 				});
 				return selected.length > 0 ? true : false;
 			},

@@ -78,8 +78,29 @@
           select: select
         };
       },
+      isEmptyObject: isEmptyObject,
+      formatRouterObj: function(obj, parent, level) {
+        var res, item, s;
+        res = [];
+        s = this;
+        level = level || 0;
+        parent = parent || 'root';
+        angular.forEach(obj, function(v, k) {
+          res.push({
+            name: k,
+            parent: parent,
+            level: level
+          });
+          if (!isEmptyObject(v)) {
+            item = s.formatRouterObj(v, k, level + 1);
+            res = res.concat(item);
+          }
+        })
+        return res;
+      },
       formatRouter: function(state) {
         var d = [];
+
         angular.forEach(state, function(value) {
           var arr, l;
           if (!value.name) return
@@ -92,10 +113,18 @@
             level: l
           })
         })
+
         return d;
       }
     };
 
     return Util;
+  }
+
+  function isEmptyObject(e) {
+    var t;
+    for (t in e)
+      return !1;
+    return !0
   }
 })();

@@ -62,21 +62,11 @@
           }
         };
 
-        function formatStatus(router) {
-          console.log(router);
-        };
-
         function defineMenuItemStates() {
-          var r, status, a;
-          r = MeResource.info.role.router;
-          status = $state.get();
-          r = '[{"name":"home","parent":"root","level":"0"}]';
-          r = angular.fromJson(r);
-          r = formatStatus(r);
-          console.log(r);
+          var status = $state.get();
           return status
             .filter(function(s) {
-              return s.sidebarMeta;
+              return s.sidebarMeta && MeResource.isAuthenticated(s.name);
             })
             .map(function(s) {
               var meta = s.sidebarMeta;
