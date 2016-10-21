@@ -259,7 +259,6 @@
             res.children = _formatItem(selected, 0, d);
           };
           return res;
-          console.log(res);
         }
 
         function _formatItem(items, level, d) {

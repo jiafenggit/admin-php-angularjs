@@ -31,19 +31,19 @@
 					s2 = $scope;
 					s2.routerOption = {
 						str: true,
-						ready: false
 					};
-					s2.resOption = {
-						ready: false
-					}
+					s2.resOption = {}
 					s2.item = item;
 					item.$get(function() {
 						s2.routerOption.data = item.router;
-						s2.resOption.data = formatResStr(item.resource);
+						s2.resOption.data = formatStrRes(item.resource);
 					});
 
 					s2.update = function() {
-						item.router = s2.routerOption.data;
+						if (item.id !== 1) {
+							item.router = s2.routerOption.data;
+							item.resource = formatResStr(s2.resOption.data)
+						}
 						item.$update();
 						$scope.$close();
 					}
@@ -87,37 +87,82 @@
 
 		}
 		s.select(1);
-		formatResStr();
 
-		function formatResStr(str) {
-			var def, o, info, obj;
-			info = {}
-			def = MY.$roles.info;
-			angular.forEach(def, function(v) {
-				if (typeof(info[v.controller]) === 'undefined') {
-					info[v.controller] = {};
+
+		function formatStrRes(str) {
+			var conf, obj, result = {};
+			conf = {
+				data: MY.$roles.info,
+				status: str === '*'
+			};
+			angular.forEach(conf.data, function(v) {
+				if (typeof(result[v.controller]) === 'undefined') {
+					result[v.controller] = {
+						$$disabled: !conf.status
+					};
 				}
-				o = info[v.controller][v.resource] = {
-					field: {},
-					method: {}
+				result[v.controller][v.resource] = {
+					fields: {},
+					method: {},
+					$$disabled: !conf.status
 				};
 				v.xfield.split(',').map(function(s) {
-					o.field[s] = true;
+					result[v.controller][v.resource].fields[s] = conf.status;
 				});
 				v.method.split(',').map(function(s) {
-					o.method[s] = true;
+					result[v.controller][v.resource].method[s] = conf.status;
 				});
 			})
-			if (str !== '*') {
-				obj = angular.json(str);
-				disabled(o, info)
-				des
+			if (!conf.status) {
+				obj = angular.fromJson(str);
+				angular.forEach(obj, function(value, ctr) {
+					if (typeof(result[ctr]) === "object") {
+						result[ctr].$$disabled = false;
+						angular.forEach(obj[ctr], function(v, rest) {
+							if (typeof(result[ctr][rest]) === "object") {
+								result[ctr][rest].$$disabled = false;
+								disabled(result[ctr][rest], 'fields', v.fields.split(','))
+								disabled(result[ctr][rest], 'method', v.method)
+							}
+
+						})
+					}
+				})
 			}
-			return info
+			return result;
 		}
 
-		function disabled(o, info) {
-          
+		function formatResStr(obj) {
+			var result = {};
+			angular.forEach(obj, function(value, ctr) {
+				if (value.$$disabled) return;
+				result[ctr] = {};
+				angular.forEach(value, function(v, rest) {
+					if (rest.indexOf('$') > -1) return
+					if (v.$$disabled) return;
+					result[ctr][rest] = {
+						fields: translateObjStr(v.fields),
+						method: translateObjStr(v.method).split(',')
+					}
+				})
+			})
+			return angular.toJson(result);
+		}
+
+		function translateObjStr(obj) {
+			var result = '';
+			angular.forEach(obj, function(v, k) {
+				if (v) result += k + ',';
+			})
+			return result.length > 0 ? result.substr(0, result.length - 1) : '';
+		}
+
+		function disabled(obj, key, arr) {
+			angular.forEach(obj[key], function(v, k) {
+				if (arr.indexOf(k) > -1) {
+					obj[key][k] = true;
+				}
+			})
 		}
 	}
 })();
