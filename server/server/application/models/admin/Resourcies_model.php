@@ -18,7 +18,7 @@ class Resourcies_model extends MY_Model {
   );
   protected $_tbl = 'resourcies';
   protected $_tbl_key = 'id';  
-  protected $_query_field = 'id,controller,resource,tbl,template,xfield,method';
+  protected $_query_field = 'id,controller,resource,tbl,label,template,xfield,method';
   protected $_get_field = 'id,controller,resource,tbl,template,utime,ctime';
   protected $_create_field = 'controller,resource,template';
   protected $_update_field = '';

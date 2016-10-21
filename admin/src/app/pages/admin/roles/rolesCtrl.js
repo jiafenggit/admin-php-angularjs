@@ -10,6 +10,7 @@
 		s.conf = {
 			'$roles': MY.$roles.config
 		}
+		console.log(s.conf);
 		s.select = function(i) {
 			Collection.query({
 				limit: 10,
@@ -27,22 +28,24 @@
 				templateUrl: 'app/pages/admin/roles/modalTemplates/show.html',
 				size: 'lg',
 				controller: function($scope) {
-					var s2, resourcies;
-					s2 = $scope;
+					var s2 = $scope;
+					s2.conf = s.conf.$roles;
+					console.log(s2.conf);
 					s2.routerOption = {
 						str: true,
 					};
 					s2.resOption = {}
 					s2.item = item;
 					item.$get(function() {
-						s2.routerOption.data = item.router;
-						s2.resOption.data = formatStrRes(item.resource);
+						if (s2.conf.field.router) s2.routerOption.data = item.router;
+						if (s2.conf.field.resource) s2.resOption.data = formatStrRes(item.resource);
 					});
 
 					s2.update = function() {
 						if (item.id !== 1) {
-							item.router = s2.routerOption.data;
-							item.resource = formatResStr(s2.resOption.data)
+							if (s2.conf.field.router) item.router = s2.routerOption.data;
+							if (s2.conf.field.resource) item.resource = formatResStr(s2.resOption.data)
+
 						}
 						item.$update();
 						$scope.$close();
@@ -56,17 +59,27 @@
 			var config = {
 				animation: true,
 				templateUrl: 'app/pages/admin/roles/modalTemplates/create.html',
-				size: 'md',
+				size: 'lg',
 				controller: function($scope) {
-					var item = $scope.item = new Collection;
-					$scope.state = Util.power($state.get())
+					var s2, item;
+					s2 = $scope;
+					s2.item = item = new Collection;
+					s2.routerOption = {
+						str: true,
+						data: '{}'
+					};
+					s2.resOption = {
+						data: formatStrRes('{}')
+					};
 					$scope.create = function() {
-						item.power = getPower($scope.state);
+						item.router = s2.routerOption.data;
+						item.resource = formatResStr(s2.resOption.data)
 						item.$save(function() {
 							$scope.$close();
 						});
 
 					}
+
 				}
 			};
 			$uibModal.open(config).result.then(function() {
@@ -74,14 +87,13 @@
 			});
 		};
 		s.remove = function(item) {
-			var config = {
+			$uibModal.open({
 				animation: true,
 				templateUrl: 'app/templates/remove.html',
 				size: 'sm'
-			};
-			$uibModal.open(config).result.then(function() {
+			}).result.then(function() {
 				item.$remove(function() {
-					$scope.select(1);
+					s.select(1);
 				})
 			});
 
@@ -104,7 +116,8 @@
 				result[v.controller][v.resource] = {
 					fields: {},
 					method: {},
-					$$disabled: !conf.status
+					$$disabled: !conf.status,
+					$$label: v.label
 				};
 				v.xfield.split(',').map(function(s) {
 					result[v.controller][v.resource].fields[s] = conf.status;

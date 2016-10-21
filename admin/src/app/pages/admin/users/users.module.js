@@ -11,9 +11,15 @@
         templateUrl: 'app/pages/admin/users/users.html',
         title: '管理员列表',
         resolve: {
-          roles: function(MyResource,MeResource) {
-            var roles = MyResource.create('admin', 'role');
-            return new roles.query();
+          MY: function(MeResource, MyResource) {
+            console.log(MeResource, MyResource);
+            var m = {};
+            m.$roles = {
+              resource: MyResource.create('admin', 'roles'),
+              config: MeResource.resCtr('admin', 'roles', 'id,label,router,resource,utime,ctime'),
+              info: _res
+            };
+            return m;
           }
         },
         controller: 'AdminUsersCtrl',

@@ -46,6 +46,7 @@ class Admin extends REST_Controller {
   public function roles_info()
   { 
     $this->load->model('admin/Resourcies_model','resourcies');
+    $this->resourcies->Setter('query_field','id,controller,resource,label,xfield,method');
     $this->response($this->resourcies->query(), 200);
   }
 
@@ -91,9 +92,9 @@ class Admin extends REST_Controller {
   }
 
   public function rest_delete()
-  {
-    $this->resourcies->remove($this->delete('id'));
-    $this->response('',204);
+  { 
+    $this->resourcies->remove($this->get('id'));
+    // $this->response('',204);
   }
 }
 

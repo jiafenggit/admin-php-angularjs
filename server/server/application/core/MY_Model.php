@@ -104,8 +104,8 @@ class MY_Model extends CI_Model {
       'status' => -1,
       'utime' => time()
     );
-    $this->db->where($this->tbl_key,$id)
-         ->update($this->tbl, $data);
+    $this->db->where($this->_tbl_key,$key)
+         ->update($this->_tbl, $data);
     return $this->db->affected_rows() > 0;
   }
   
