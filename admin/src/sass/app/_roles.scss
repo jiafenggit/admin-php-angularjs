@@ -1,16 +1,14 @@
-.rest-ctr{
-  .ctr,
-  .rest{
-    position: relative;
+.restCtrBox{
+  &.panel >.panel-body{
+    padding: 10px;
   }
-  .ctr-label,
-  .rest-label{
-    // writing-mode: vertical-lr;
-  }
-  .ctr-label{
-    background-color: #ff9800;
-  }
-  .rest-label{
-    background-color: #03a9f4;
+  thead,
+  tbody,
+  tfoot{
+    & >tr{
+      >th, >td{
+        vertical-align: middle;
+      }
+    }
   }
 }

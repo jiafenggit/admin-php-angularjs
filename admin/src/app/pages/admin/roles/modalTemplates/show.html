@@ -20,27 +20,38 @@
           <router-tree option="routerOption"></router-tree>
         </div>
       </div>
-      <div class="panel panel-danger contextual-example-panel bootstrap-panel rest-ctr">
+      <div class="panel panel-danger contextual-example-panel bootstrap-panel restCtrBox">
         <div class="panel-heading">资源控制</div>
         <div class="panel-body" ng-if="resOption.data">
-          <div ng-repeat="(ctr, ctrValue) in resOption.data" class="row ctr">
-            <!-- 控制器-->
-            <div class="col-md-1 ctr-label" ng-bind="ctr"></div>
-            <div class="col-md-11 row">
-              <div class="row" ng-repeat="(rest, restValue) in ctrValue">
-                <!-- 资源-->
-                <div class="col-md-1 rest" ng-bind="rest"></div>
-                <div class="col-md-11 row">
-                  <div class="row" ng-repeat="(attr,attrValue) in restValue">
-                    <div class="col-md-1" ng-bind="attr"></div>
-                    <div class="col-md-11">
-                      <switch color="primary" ng-repeat="(field,fieldValue) in attrValue" ng-model="attrValue[field]" ng-data="field"></switch>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>控制器</th>
+                <th>资源名</th>
+                <th>允许的方法</th>
+                <th>可访问的字段</th>
+              </tr>
+            </thead>
+            <tbody ng-repeat="(ctr, ctrValue) in resOption.data" class="row" disabled>
+              <tr>
+                <td class="col-md-1"  rowspan="10">
+                  <button class="btn" ng-class="{'btn-info': !ctrValue.$$disabled}" ng-click="ctrValue.$$disabled = !ctrValue.$$disabled" ng-bind="ctr"></button>
+                </td>
+              </tr>
+              <tr ng-repeat="(rest, restValue) in ctrValue">
+                <td class="col-md-1" >
+                  <button class="btn" ng-class="{'btn-info': !restValue.$$disabled}" ng-click="restValue.$$disabled = !restValue.$$disabled" ng-bind="rest"></button>
+                </td>
+                <td class="col-md-4 row">
+                  <switch class="col-md-6"  color="warning" ng-repeat="(method,methodValue) in restValue.method" ng-model="restValue.method[method]" ng-data="method"></switch>
+                </td>
+                <td class="col-md-6 row">
+                  <switch class="col-md-4" color="primary" ng-repeat="(field,fieldValue) in restValue.fields" ng-model="restValue.fields[field]" ng-data="field"></switch>
+                </td>
+              </tr>
+            </tbody>
+
+          </table>
         </div>
       </div>
       <div class="form-group input-group">
