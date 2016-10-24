@@ -6,21 +6,21 @@
 					<thead>
 						<tr>
 							<th class="col-md-1">UID</th>
-							<th class="col-md-1">账号</th>
-							<th class="col-md-1">昵称</th>
-							<th class="col-md-1">权限组</th>
+							<th class="col-md-1" ng-if="::conf.$users.field.username">账号</th>
+							<th class="col-md-1" ng-if="::conf.$users.field.name">昵称</th>
+							<th class="col-md-1" ng-if="::conf.$users.field.role">权限组</th>
 							<th class="col-md-2 text-center">操作</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr ng-repeat="item in collections">
 							<td>{{::item.uid}}</td>
-							<td>{{::item.username}}</td>
-							<td>{{::item.name}}</td>
-							<td>{{::item.role | role:roles}}</td>
+							<td ng-if="::conf.$users.field.username">{{::item.username}}</td>
+							<td ng-if="::conf.$users.field.name">{{::item.name}}</td>
+							<td ng-if="::conf.$users.field.role">{{::item.role | role:roles}}</td>
 							<td class="text-center">
-								<button class="btn btn-info btn-xs" ng-click="show(item)">详细</button>
-								<button class="btn btn-danger btn-xs" ng-click="remove(item)">删除</button>
+								<button class="btn btn-info btn-xs" ng-click="show(item)" ng-if="::conf.$users.method.get">详细</button>
+								<button class="btn btn-danger btn-xs" ng-click="remove(item)" ng-if="::conf.$users.method.delete">删除</button>
 							</td>
 						</tr>
 					</tbody>
@@ -55,7 +55,7 @@
 								</nav>
 							</td>
 							<td colspan="1" class="text-center">
-								<button class="btn btn-warning" ng-click="create()">添加管理员</button>
+								<button class="btn btn-warning" ng-click="create()" ng-if="::conf.$users.method.post">添加管理员</button>
 							</td>
 						</tr>
 					</tfoot>

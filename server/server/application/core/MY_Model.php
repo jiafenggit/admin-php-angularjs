@@ -85,7 +85,7 @@ class MY_Model extends CI_Model {
       $resource = $valid['data'];
       $resource['utime'] = time();
       $this->db
-        ->where($this->_tbl_key,$data['id'])
+        ->where($this->_tbl_key,$data[$this->_tbl_key])
         ->update($this->_tbl, $resource);
       if( $this->db->affected_rows() < 1)
       {

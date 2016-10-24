@@ -11,13 +11,18 @@
         templateUrl: 'app/pages/admin/users/users.html',
         title: '管理员列表',
         resolve: {
-          MY: function(MeResource, MyResource) {
-            console.log(MeResource, MyResource);
+          USERS_INFO: function(MyResource) {
+            var Collection = MyResource.create('admin', 'users');
+            return Collection.info().$promise;
+          },
+          MY: function(MeResource, MyResource, USERS_INFO) {
             var m = {};
-            m.$roles = {
-              resource: MyResource.create('admin', 'roles'),
-              config: MeResource.resCtr('admin', 'roles', 'id,label,router,resource,utime,ctime'),
-              info: _res
+            m.$users = {
+              resource: MyResource.create('admin', 'users', 'uid'),
+              config: MeResource.resCtr('admin', 'users', 'uid,username,name,role,ip,utime,ctime'),
+              info: {
+                roles: USERS_INFO
+              }
             };
             return m;
           }

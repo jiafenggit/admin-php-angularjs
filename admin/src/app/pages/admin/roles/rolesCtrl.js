@@ -9,8 +9,7 @@
 		Collection = MY.$roles.resource;
 		s.conf = {
 			'$roles': MY.$roles.config
-		}
-		console.log(s.conf);
+		};
 		s.select = function(i) {
 			Collection.query({
 				limit: 10,
@@ -30,7 +29,6 @@
 				controller: function($scope) {
 					var s2 = $scope;
 					s2.conf = s.conf.$roles;
-					console.log(s2.conf);
 					s2.routerOption = {
 						str: true,
 					};
@@ -48,7 +46,7 @@
 
 						}
 						item.$update();
-						$scope.$close();
+						s2.$close();
 					}
 				}
 			}).result.then(function() {
@@ -56,7 +54,7 @@
 			})
 		};
 		s.create = function() {
-			var config = {
+			$uibModal.open({
 				animation: true,
 				templateUrl: 'app/pages/admin/roles/modalTemplates/create.html',
 				size: 'lg',
@@ -71,18 +69,17 @@
 					s2.resOption = {
 						data: formatStrRes('{}')
 					};
-					$scope.create = function() {
+					s2.create = function() {
 						item.router = s2.routerOption.data;
 						item.resource = formatResStr(s2.resOption.data)
 						item.$save(function() {
-							$scope.$close();
+							s2.$close();
 						});
 
 					}
 
 				}
-			};
-			$uibModal.open(config).result.then(function() {
+			}).result.then(function() {
 				s.select(1);
 			});
 		};

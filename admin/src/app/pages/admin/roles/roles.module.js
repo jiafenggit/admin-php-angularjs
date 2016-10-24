@@ -13,16 +13,16 @@
         title: '权限组',
         controller: 'AdminRolesCtrl',
         resolve: {
-          _res: function(MyResource) {
+          ROLES_INFO: function(MyResource) {
             var Collection = MyResource.create('admin', 'roles');
             return Collection.info().$promise;
           },
-          MY: function(MeResource, MyResource, _res) {
+          MY: function(MeResource, MyResource, ROLES_INFO) {
             var m = {};
             m.$roles = {
               resource: MyResource.create('admin', 'roles'),
               config: MeResource.resCtr('admin', 'roles', 'id,label,router,resource,utime,ctime'),
-              info: _res
+              info: ROLES_INFO
             };
             return m;
           }

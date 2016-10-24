@@ -10,9 +10,9 @@
         <label class="input-group-addon input-group-addon-primary addon-left">ID</label>
         <input type="text" class="form-control" value="{{item.id}}" disabled></div>
       <div class="form-group input-group">
-        <label class="input-group-addon input-group-addon-primary addon-left" ng-if="conf.field.label">标签</label>
+        <label class="input-group-addon input-group-addon-primary addon-left" ng-if="::conf.field.label">标签</label>
         <input type="text" class="form-control" ng-model="item.label"></div>
-      <div class="panel panel-danger contextual-example-panel bootstrap-panel" ng-if="conf.field.router">
+      <div class="panel panel-danger contextual-example-panel bootstrap-panel" ng-if="::conf.field.router">
         <div class="panel-heading">路由控制</div>
         <div class="panel-body" ng-if="routerOption.data">
           <button class="btn btn-info" ng-click="routerOption.str=true" ng-disabled="routerOption.str">查看</button>
@@ -20,7 +20,7 @@
           <router-tree option="routerOption"></router-tree>
         </div>
       </div>
-      <div class="panel panel-danger contextual-example-panel bootstrap-panel restCtrBox" ng-if="conf.field.resource">
+      <div class="panel panel-danger contextual-example-panel bootstrap-panel restCtrBox" ng-if="::conf.field.resource">
         <div class="panel-heading">资源控制</div>
         <div class="panel-body" ng-if="resOption.data">
           <table class="table table-bordered">
@@ -54,13 +54,13 @@
           </table>
         </div>
       </div>
-      <div class="form-group input-group" ng-if="conf.field.ctime">
+      <div class="form-group input-group" ng-if="::conf.field.ctime">
         <label class="input-group-addon input-group-addon-primary addon-left">注册时间</label>
         <input type="text" class="form-control" value="{{item.ctime*1000 | date:'y-MM-dd HH:mm:ss'}}" disabled></div>
-      <div class="form-group input-group" ng-if="conf.field.utime">
+      <div class="form-group input-group" ng-if="::conf.field.utime">
         <label class="input-group-addon input-group-addon-primary addon-left">更新时间</label>
         <input type="text" class="form-control" value="{{item.utime*1000 | date:'y-MM-dd HH:mm:ss'}}" disabled></div>
-      <div class="text-right" ng-if="conf.method.put">
+      <div class="text-right" ng-if="::conf.method.put">
         <span >
           <button type="submit" class="btn btn-primary btn-with-icon" ng-click="update()"> <i class="fa fa-save"></i>
             保存
